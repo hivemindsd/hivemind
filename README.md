@@ -96,7 +96,7 @@ If you wish to just develop locally and not deploy to Vercel, [follow the steps 
 
 ## Feedback and issues
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).  
 
 ## More Supabase examples
 
