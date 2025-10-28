@@ -106,3 +106,4 @@ Please file feedback and issues over on the [Supabase GitHub org](https://github
 
 HI I'M LAWSON AND THIS IS MY COMMIT
 HELLO LAWSON, I'M CHRIS AND THIS IS MY COMMIT
+HELLO LAWSON AND CHRIS, I'M OSCAR AND THIS IS MY COMMIT
