@@ -31,7 +31,6 @@ jobs:
         DEPLOY_URL=$(npx vercel deploy --prebuilt \
           --token="$VERCEL_TOKEN" \
           --scope="$VERCEL_ORG_ID" \
-          --project-id="$VERCEL_PROJECT_ID" \
           --yes)
 
         echo "Preview URL: $DEPLOY_URL"
