@@ -28,16 +28,13 @@ jobs:
     - name: Deploy preview to Vercel
       id: vercel_deploy
       run: |
-        DEPLOY_URL=$(npx vercel deploy --prebuilt \
+        DEPLOY_URL=$(npx vercel deploy \
           --token="$VERCEL_TOKEN" \
           --scope="$VERCEL_ORG_ID" \
           --yes)
-
-        echo "Preview URL: $DEPLOY_URL"
-
-        ### set base url to deploy url ###
+    
         echo "PLAYWRIGHT_BASE_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
-
+    
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
