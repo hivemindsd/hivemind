@@ -35,7 +35,7 @@ yarn-error.log*
 .env
 
 # vercel
-.vercel
+.vercel/
 
 # typescript
 *.tsbuildinfo
@@ -49,4 +49,14 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 
-.vscode
+.vscode.vercel/
+.vercel/
+.vercel/
+.vercel/
+.vercel/
+.vercel/
+.vercel/
+.vercel/
+.vercel/
+.vercel/
+.vercel/
