@@ -5,7 +5,7 @@ let password = "FakePassword!"
 
 
 test('has title', async ({ page }) => {
-  await page.goto('https://hivemind-qgfariece-hiveminds-projects-62c372da.vercel.app/auth/login');
+  await page.goto('/auth/login');
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Supabase/);
@@ -16,7 +16,7 @@ test('has title', async ({ page }) => {
 */
 
 test('login test success', async ({ page }) => {
-  await page.goto('https://hivemind-qgfariece-hiveminds-projects-62c372da.vercel.app/auth/login');
+  await page.goto('/auth/login');
   
   // enter email and password
   await page.getByLabel('Email').fill(email);
@@ -33,7 +33,7 @@ test('login test success', async ({ page }) => {
   Test when a user does not have an account
 */
 test('login test failure', async ({ page }) => {
-  await page.goto('https://hivemind-qgfariece-hiveminds-projects-62c372da.vercel.app/auth/login');
+  await page.goto('/auth/login');
   
   // enter email and password
   await page.getByLabel('Email').fill('noaccount@gmail.com');
