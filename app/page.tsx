@@ -30,6 +30,11 @@ export default function Home() {
             {hasEnvVars ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
           </main>
         </div>
+        <div>
+          <Link href="/new-page" className="text-primary hover:text-foreground">
+            Go to the Funny Page of Doom!
+          </Link>
+        </div>
 
         <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
           <p>
