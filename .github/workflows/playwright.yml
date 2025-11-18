@@ -1,5 +1,5 @@
 name: Playwright Tests
-on: [push, pull_request]
+on: [push]
 jobs:
   test:
     timeout-minutes: 60
@@ -24,7 +24,7 @@ jobs:
 
     - name: Get Vercel deployment URL
       run: |
-        COMMIT_SHA="${{ github.event.pull_request.head.sha || github.sha }}"
+        COMMIT_SHA="${{ github.sha }}"
         DEPLOYMENT_RESPONSE=$(curl -s \
           "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&limit=20" \
           -H "Authorization: Bearer $VERCEL_TOKEN")
