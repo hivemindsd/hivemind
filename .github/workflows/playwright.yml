@@ -22,17 +22,68 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Build app
-      run: npm run build
-
-    - name: Deploy preview to Vercel
-      id: vercel_deploy
+    - name: Get Vercel deployment URL
+      id: vercel_url
       run: |
-        DEPLOY_URL=$(npx vercel deploy \
-          --token="$VERCEL_TOKEN" \
-          --scope="$VERCEL_ORG_ID" \
-          --yes)
-    
+        # Get the current commit SHA
+        COMMIT_SHA="${{ github.event.pull_request.head.sha || github.sha }}"
+        
+        echo "Looking for deployment for commit: $COMMIT_SHA"
+        
+        # Wait for Vercel deployment to be ready (with retries)
+        MAX_RETRIES=30
+        RETRY_COUNT=0
+        DEPLOY_URL=""
+        
+        while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+          # Get deployments using Vercel API
+          DEPLOYMENT_RESPONSE=$(curl -s \
+            "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&limit=20" \
+            -H "Authorization: Bearer $VERCEL_TOKEN")
+          
+          # Extract deployment URL for the current commit
+          DEPLOY_URL=$(echo "$DEPLOYMENT_RESPONSE" | \
+            jq -r --arg sha "$COMMIT_SHA" \
+            '.deployments[] | select(.meta.githubCommitSha == $sha) | select(.readyState == "READY") | .url' | \
+            head -n 1)
+          
+          # If found, break
+          if [ -n "$DEPLOY_URL" ] && [ "$DEPLOY_URL" != "null" ]; then
+            break
+          fi
+          
+          # If not found, wait and retry
+          RETRY_COUNT=$((RETRY_COUNT + 1))
+          if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+            echo "Deployment not ready yet, waiting... (attempt $RETRY_COUNT/$MAX_RETRIES)"
+            sleep 10
+          fi
+        done
+        
+        # If still not found, try to get latest preview deployment as fallback
+        if [ -z "$DEPLOY_URL" ] || [ "$DEPLOY_URL" == "null" ]; then
+          echo "Deployment not found by commit SHA, trying latest preview..."
+          DEPLOYMENT_RESPONSE=$(curl -s \
+            "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&limit=5" \
+            -H "Authorization: Bearer $VERCEL_TOKEN")
+          DEPLOY_URL=$(echo "$DEPLOYMENT_RESPONSE" | \
+            jq -r '.deployments[] | select(.target == "preview") | select(.readyState == "READY") | .url' | \
+            head -n 1)
+        fi
+        
+        # Ensure we have a URL
+        if [ -z "$DEPLOY_URL" ] || [ "$DEPLOY_URL" == "null" ]; then
+          echo "Error: Could not find Vercel deployment URL"
+          echo "API Response: $DEPLOYMENT_RESPONSE"
+          exit 1
+        fi
+        
+        # Add https:// prefix if not present
+        if [[ ! "$DEPLOY_URL" =~ ^https?:// ]]; then
+          DEPLOY_URL="https://$DEPLOY_URL"
+        fi
+        
+        echo "Found deployment URL: $DEPLOY_URL"
         echo "PLAYWRIGHT_BASE_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
     
     - name: Install Playwright Browsers
