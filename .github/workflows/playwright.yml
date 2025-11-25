@@ -32,11 +32,27 @@ jobs:
           jq -r --arg sha "$COMMIT_SHA" \
           '.deployments[] | select(.meta.githubCommitSha == $sha) | .url' | \
           head -n 1)
+        if [ -z "$DEPLOY_URL" ] || [ "$DEPLOY_URL" = "null" ]; then
+          echo "Error: No Vercel deployment found for commit $COMMIT_SHA"
+          exit 1
+        fi
         if [[ ! "$DEPLOY_URL" =~ ^https?:// ]]; then
           DEPLOY_URL="https://$DEPLOY_URL"
         fi
         echo "PLAYWRIGHT_BASE_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
+        echo "Found deployment URL: $DEPLOY_URL"
     
+    - name: Wait for Vercel deployment to be ready
+      uses: UnlyEd/github-action-await-vercel@v1
+      id: await-vercel
+      env:
+        VERCEL_TOKEN: ${{ env.VERCEL_TOKEN }}
+      with:
+        deployment-url: ${{ env.PLAYWRIGHT_BASE_URL }}
+        timeout: 300 # Wait for 5 minutes before failing
+        poll-interval: 10 # Wait for 10 seconds before each retry
+
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 

@@ -7,7 +7,7 @@ let password = "FakePassword!"
 test('has title', async ({ page }) => {
   await page.goto('/auth/login');
 
-  // Expect a title "to contain" a substring.
+  // Expect a title "to contain" a substring
   await expect(page).toHaveTitle(/Supabase/);
 });
 
@@ -26,7 +26,7 @@ test('login test success', async ({ page }) => {
   await page.getByRole('button', { name: 'Login' }).click();
 
   // Expects page to have a heading with the name of Installation.
-  await expect(page.getByText("This is a protected page that you can only see as an authenticated user")).toBeVisible();
+  await expect(page.getByText("hello world")).toBeVisible();
 });
 
 /* 
