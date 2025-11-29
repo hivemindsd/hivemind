@@ -7,7 +7,7 @@ test('has title', async ({ page }) => {
 	await page.goto('/auth/login')
 
 	// Expect a title "to contain" a substring
-	await expect(page).toHaveTitle(/Supabase/)
+	await expect(page).toHaveTitle(/Hivemind/)
 })
 
 /* 
