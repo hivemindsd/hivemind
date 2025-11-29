@@ -25,7 +25,7 @@ test('login test success', async ({ page }) => {
 	await page.getByRole('button', { name: 'Login' }).click()
 
 	// Expects page to have a heading with the name of Installation.
-	await expect(page.getByText('hello world')).toBeVisible()
+	await expect(page.getByText('Your organizations')).toBeVisible()
 })
 
 /* 
