@@ -11,58 +11,56 @@ jobs:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Get Vercel deployment URL
-      run: |
-        COMMIT_SHA="${{ github.sha }}"
-        DEPLOYMENT_RESPONSE=$(curl -s \
-          "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&limit=20" \
-          -H "Authorization: Bearer $VERCEL_TOKEN")
-        DEPLOY_URL=$(echo "$DEPLOYMENT_RESPONSE" | \
-          jq -r --arg sha "$COMMIT_SHA" \
-          '.deployments[] | select(.meta.githubCommitSha == $sha) | .url' | \
-          head -n 1)
-        if [ -z "$DEPLOY_URL" ] || [ "$DEPLOY_URL" = "null" ]; then
-          echo "Error: No Vercel deployment found for commit $COMMIT_SHA"
-          exit 1
-        fi
-        if [[ ! "$DEPLOY_URL" =~ ^https?:// ]]; then
-          DEPLOY_URL="https://$DEPLOY_URL"
-        fi
-        echo "PLAYWRIGHT_BASE_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
-        echo "Found deployment URL: $DEPLOY_URL"
-    
-    - name: Wait for Vercel deployment to be ready
-      uses: UnlyEd/github-action-await-vercel@v1
-      id: await-vercel
-      env:
-        VERCEL_TOKEN: ${{ env.VERCEL_TOKEN }}
-      with:
-        deployment-url: ${{ env.PLAYWRIGHT_BASE_URL }}
-        timeout: 300 # Wait for 5 minutes before failing
-        poll-interval: 10 # Wait for 10 seconds before each retry
+      - name: Get Vercel deployment URL
+        run: |
+          COMMIT_SHA="${{ github.sha }}"
+          DEPLOYMENT_RESPONSE=$(curl -s \
+            "https://api.vercel.com/v6/deployments?projectId=$VERCEL_PROJECT_ID&limit=20" \
+            -H "Authorization: Bearer $VERCEL_TOKEN")
+          DEPLOY_URL=$(echo "$DEPLOYMENT_RESPONSE" | \
+            jq -r --arg sha "$COMMIT_SHA" \
+            '.deployments[] | select(.meta.githubCommitSha == $sha) | .url' | \
+            head -n 1)
+          if [ -z "$DEPLOY_URL" ] || [ "$DEPLOY_URL" = "null" ]; then
+            echo "Error: No Vercel deployment found for commit $COMMIT_SHA"
+            exit 1
+          fi
+          if [[ ! "$DEPLOY_URL" =~ ^https?:// ]]; then
+            DEPLOY_URL="https://$DEPLOY_URL"
+          fi
+          echo "PLAYWRIGHT_BASE_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
+          echo "Found deployment URL: $DEPLOY_URL"
 
+      - name: Wait for Vercel deployment to be ready
+        uses: UnlyEd/github-action-await-vercel@v1
+        id: await-vercel
+        env:
+          VERCEL_TOKEN: ${{ env.VERCEL_TOKEN }}
+        with:
+          deployment-url: ${{ env.PLAYWRIGHT_BASE_URL }}
+          timeout: 300 # Wait for 5 minutes before failing
+          poll-interval: 10 # Wait for 10 seconds before each retry
 
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
-    - name: Run Playwright tests
-      run: npx playwright test
+      - name: Run Playwright tests
+        run: npx playwright test
 
-    - name: Upload Playwright report
-      if: ${{ !cancelled() }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
