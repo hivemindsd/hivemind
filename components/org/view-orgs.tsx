@@ -32,7 +32,6 @@ export async function ViewOrgs() {
 	//	  }
 	// }
 
-
 	// placeholder while we figure out exact access level names
 	function getAccessLevelName(accessLevel: number) {
 		switch (accessLevel) {
