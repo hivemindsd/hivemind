@@ -1,4 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import type { PostgrestError } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { OrgRow } from './org-row'
@@ -27,7 +28,7 @@ export async function ViewOrgs() {
 	const { data: userOrgs, error: orgsError } = (await supabase
 		.from('user_org_role')
 		.select('org_id, access_lvl, orgs(name, org_id, created_at)')
-		.eq('user_id', user.id)) as { data: UserOrg[] | null; error: any }
+		.eq('user_id', user.id)) as { data: UserOrg[] | null; error: PostgrestError | null }
 	if (orgsError) throw orgsError
 
 	// returns an object:
