@@ -3,6 +3,16 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { OrgRow } from './org-row'
 
+export type UserOrg = {
+	org_id: number
+	access_lvl: number
+	orgs: {
+		name: string
+		org_id: number
+		created_at: string
+	}
+}
+
 export async function ViewOrgs() {
 	const supabase = await createClient()
 	const {
@@ -14,10 +24,10 @@ export async function ViewOrgs() {
 		redirect('/auth/login')
 	}
 
-	const { data: userOrgs, error: orgsError } = await supabase
+	const { data: userOrgs, error: orgsError } = (await supabase
 		.from('user_org_role')
 		.select('org_id, access_lvl, orgs(name, org_id, created_at)')
-		.eq('user_id', user.id)
+		.eq('user_id', user.id)) as { data: UserOrg[] | null; error: any }
 	if (orgsError) throw orgsError
 
 	// returns an object:
@@ -31,7 +41,6 @@ export async function ViewOrgs() {
 	//		 created_at: '2025-11-29T20:42:41.324275+00:00' <--- supabase is returning the date as a string
 	//	  }
 	// }
-
 
 	// placeholder while we figure out exact access level names
 	function getAccessLevelName(accessLevel: number) {
@@ -58,7 +67,7 @@ export async function ViewOrgs() {
 			</TableHeader>
 			<TableBody>
 				{userOrgs && userOrgs.length > 0 ? (
-					userOrgs.map((userOrg: any) => {
+					userOrgs.map((userOrg: UserOrg) => {
 						return (
 							// OrgRow component is specifically client rendered, otherwise a server rendered component would be used and the onClick would not work
 							<OrgRow
