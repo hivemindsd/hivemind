@@ -1,20 +1,27 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { MemberRow } from '@/components/org/member-row'
 import { createClient } from '@/lib/supabase/client'
+import type { PostgrestError } from '@supabase/supabase-js'
 
 type ViewOrgMembersProps = {
 	orgId: number
+}
+
+type OrgMember = {
+	user_id: string
+	access_lvl: number
+	created_at: string
 }
 
 export async function ViewOrgMembers({ orgId }: ViewOrgMembersProps) {
 	const supabase = await createClient()
 
 	//TODO: actually get the user emails too, not just the ID's
-	const { data: members, error: membersError } = await supabase
+	const { data: members, error: membersError } = await (supabase
 		.from('user_org_role')
 		.select('user_id, access_lvl, created_at')
 		.eq('org_id', orgId)
-		.order('created_at', { ascending: true })
+		.order('created_at', { ascending: true })) as { data: OrgMember[] | null; error: PostgrestError | null }
 	if (membersError) throw membersError
 
 	function getAccessLevelName(accessLevel: number) {
@@ -41,7 +48,7 @@ export async function ViewOrgMembers({ orgId }: ViewOrgMembersProps) {
 			</TableHeader>
 			<TableBody>
 				{members && members.length > 0 ? (
-					members.map((member: any) => (
+					members.map((member: OrgMember) => (
 						<MemberRow
 							key={member.user_id}
 							userEmail={'email string... TODO'}
