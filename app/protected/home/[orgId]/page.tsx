@@ -7,7 +7,7 @@ export default function Page() {
 				<div className='pb-5'>
 					<h1 className='text-2xl font-semibold'>Homepage (aka per organization Dashboard)</h1>
 				</div>
-                <DeleteOrgButton />
+				<DeleteOrgButton />
 			</div>
 		</div>
 	)
