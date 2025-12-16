@@ -39,7 +39,6 @@ export function DeleteOrgButton() {
 				data: { user },
 				error: userError
 			} = await supabase.auth.getUser()
-
 			if (userError || !user) throw userError
 
 			// delete the user_org_role relationships first

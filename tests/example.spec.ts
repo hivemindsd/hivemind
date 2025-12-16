@@ -28,7 +28,7 @@ test('has title', async ({ page }) => {
 // 	await expect(page.getByText('Your organizations')).toBeVisible()
 // })
 
-// /* 
+// /*
 //   Test when a user does not have an account
 // */
 // test('login test failure', async ({ page }) => {

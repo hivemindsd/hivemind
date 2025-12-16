@@ -20,8 +20,8 @@ export async function ViewOrgs() {
 		data: { user },
 		error: error
 	} = await supabase.auth.getUser()
-
 	if (error || !user) {
+		// if we can't get the user, redirect to login
 		redirect('/auth/login')
 	}
 
@@ -76,7 +76,7 @@ export async function ViewOrgs() {
 								orgId={userOrg.org_id}
 								name={userOrg.orgs.name}
 								accessLevelName={getAccessLevelName(userOrg.access_lvl)}
-								createdAt={userOrg.orgs.created_at}
+								createdAt={new Date(userOrg.orgs.created_at).toLocaleDateString()}
 							/>
 						)
 					})
