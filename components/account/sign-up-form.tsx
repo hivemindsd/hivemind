@@ -35,7 +35,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
 				email,
 				password,
 				options: {
-					emailRedirectTo: `${window.location.origin}/protected`
+					emailRedirectTo: `${window.location.origin}/onboarding/profile-setup`
 				}
 			})
 			if (error) throw error
@@ -62,7 +62,7 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
 								<Input
 									id='email'
 									type='email'
-									placeholder='m@example.com'
+									placeholder='mail@example.com'
 									required
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}

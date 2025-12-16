@@ -19,7 +19,7 @@ export function OrgRow({ orgId, name, accessLevelName, createdAt }: OrgRowProps)
 		<TableRow>
 			<TableCell>{name}</TableCell>
 			<TableCell>{accessLevelName}</TableCell>
-			<TableCell>{new Date(createdAt).toLocaleDateString()}</TableCell>
+			<TableCell>{createdAt}</TableCell>
 			<TableCell className='flex'>
 				<Button onClick={() => router.push(`/protected/home/${orgId}`)}>
 					View

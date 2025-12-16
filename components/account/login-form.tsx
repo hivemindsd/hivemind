@@ -29,6 +29,24 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 				password
 			})
 			if (error) throw error
+
+			// If user has not filled out required profile info, redirect to profile setup
+			const {
+				data: { user },
+				error: userError
+			} = await supabase.auth.getUser()
+			if (userError) throw userError
+
+			const { data: profile } = await supabase
+				.from('profiles')
+				.select('first_name, last_name')
+				.eq('id', user?.id)
+				.single()
+
+			if (!profile?.first_name || !profile?.last_name) {
+				router.push('/onboarding/profile-setup')
+				return
+			}
 			// Update this route to redirect to an authenticated route. The user already has an active session.
 			router.push('/protected/orgs')
 		} catch (error: unknown) {
