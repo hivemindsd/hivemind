@@ -44,7 +44,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 				.single()
 
 			if (!profile?.first_name || !profile?.last_name) {
-				router.push('/onboarding/profile-setup')
+				router.push('/protected/profile-setup')
 				return
 			}
 			// Update this route to redirect to an authenticated route. The user already has an active session.
