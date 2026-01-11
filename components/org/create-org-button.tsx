@@ -13,7 +13,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { createClient } from '@/lib/supabase/client'
-import { PlusIcon } from 'lucide-react'
+import { PlusIcon, LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -98,7 +98,7 @@ export function CreateOrgButton() {
 							Cancel
 						</Button>
 						<Button type='submit' disabled={isLoading}>
-							{isLoading ? 'Creating...' : 'Create Organization'}
+							{isLoading ? <LoaderCircle className='animate-spin' /> : 'Create Organization'}
 						</Button>
 					</DialogFooter>
 				</form>
