@@ -17,7 +17,6 @@ type OrgRowProps = {
 export function OrgRow({ orgId, name, accessLevelName, createdAt }: OrgRowProps) {
 	const router = useRouter()
 	const [isLoading, setIsLoading] = useState(false)
-	const [error, setError] = useState<string | null>(null)
 
 	return (
 		<TableRow>
