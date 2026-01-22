@@ -1,35 +1,13 @@
+'use client'
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import type { PostgrestError } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 import { OrgRow } from './org-row'
+import { useUserOrgs, type UserOrg } from '@/lib/react-query/queries'
+import { useCurrentUser } from '@/lib/react-query/auth'
 
-export type UserOrg = {
-	org_id: number
-	access_lvl: number
-	orgs: {
-		name: string
-		org_id: number
-		created_at: string
-	}
-}
-
-export async function ViewOrgs() {
-	const supabase = await createClient()
-	const {
-		data: { user },
-		error: error
-	} = await supabase.auth.getUser()
-	if (error || !user) {
-		// if we can't get the user, redirect to login
-		redirect('/auth/login')
-	}
-
-	const { data: userOrgs, error: orgsError } = (await supabase
-		.from('user_org_role')
-		.select('org_id, access_lvl, orgs(name, org_id, created_at)')
-		.eq('user_id', user.id)) as { data: UserOrg[] | null; error: PostgrestError | null }
-	if (orgsError) throw orgsError
+export function ViewOrgs() {
+	const { data: user } = useCurrentUser()
+	const { data: userOrgs, isLoading } = useUserOrgs(user?.id || '')
 
 	// returns an object:
 
@@ -80,6 +58,12 @@ export async function ViewOrgs() {
 							/>
 						)
 					})
+				) : isLoading ? (
+					<TableRow>
+						<TableCell colSpan={3} className='text-center text-muted-foreground'>
+							Loading...
+						</TableCell>
+					</TableRow>
 				) : (
 					<TableRow>
 						<TableCell colSpan={3} className='text-center text-muted-foreground'>

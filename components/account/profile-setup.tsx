@@ -1,60 +1,37 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useUpdateProfile } from '@/lib/react-query/mutations'
+import { useCurrentUser } from '@/lib/react-query/auth'
 
 export function ProfileSetup({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
 	const [firstName, setFirstName] = useState('')
 	const [lastName, setLastName] = useState('')
-	const [error, setError] = useState<string | null>(null)
-	const [isLoading, setIsLoading] = useState(false)
-	const [success, setSuccess] = useState<string | null>(null)
 	const router = useRouter()
+	const { data: user } = useCurrentUser()
+	const updateProfileMutation = useUpdateProfile()
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
-		setIsLoading(true)
-		setError(null)
-		setSuccess(null)
 
-		if (!firstName.trim() || !lastName.trim()) {
-			setError('Please provide both your first and last name')
-			setIsLoading(false)
+		if (!firstName.trim() || !lastName.trim() || !user?.id) {
 			return
 		}
 
-		try {
-			const supabase = createClient()
-
-			const {
-				data: { user },
-				error: userError
-			} = await supabase.auth.getUser()
-
-			if (userError || !user) {
-				throw new Error('User not authenticated')
+		updateProfileMutation.mutate(
+			{ userId: user.id, firstName, lastName },
+			{
+				onSuccess: () => {
+					router.push('/protected/orgs/')
+				}
 			}
-
-			const { error: updateError } = await supabase
-				.from('profiles')
-				.update({ first_name: firstName.trim(), last_name: lastName.trim() })
-				.eq('id', user.id)
-
-			if (updateError) throw updateError
-
-			setSuccess('Profile updated')
-			router.push('/protected/orgs/')
-		} catch (err: unknown) {
-			setError(err instanceof Error ? err.message : 'An error occurred')
-		} finally {
-			setIsLoading(false)
-		}
+		)
 	}
 
 	return (
@@ -89,10 +66,8 @@ export function ProfileSetup({ className, ...props }: React.ComponentPropsWithou
 									onChange={(e) => setLastName(e.target.value)}
 								/>
 							</div>
-							{error && <p className='text-sm text-red-500'>{error}</p>}
-							{success && <p className='text-sm text-green-600'>{success}</p>}
-							<Button type='submit' className='w-full' disabled={isLoading}>
-								{isLoading ? 'Saving...' : 'Save'}
+							<Button type='submit' className='w-full' disabled={updateProfileMutation.isPending || !user}>
+								{updateProfileMutation.isPending ? 'Saving...' : 'Save'}
 							</Button>
 						</div>
 					</form>

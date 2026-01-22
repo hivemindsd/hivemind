@@ -9,28 +9,22 @@ import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
-	const [error, setError] = useState<string | null>(null)
-	const [isLoading, setIsLoading] = useState(false)
 	const router = useRouter()
 
-	const handleLogin = async (e: React.FormEvent) => {
-		e.preventDefault()
-		const supabase = createClient()
-		setIsLoading(true)
-		setError(null)
-
-		try {
+	const mutation = useMutation({
+		mutationFn: async () => {
+			const supabase = createClient()
 			const { error } = await supabase.auth.signInWithPassword({
 				email,
 				password
 			})
 			if (error) throw error
 
-			// If user has not filled out required profile info, redirect to profile setup
 			const {
 				data: { user },
 				error: userError
@@ -47,13 +41,19 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 				router.push('/protected/profile-setup')
 				return
 			}
-			// Update this route to redirect to an authenticated route. The user already has an active session.
-			router.push('/protected/orgs')
-		} catch (error: unknown) {
-			setError(error instanceof Error ? error.message : 'An error occurred')
-		} finally {
-			setIsLoading(false)
+
+			return { redirectTo: '/protected/orgs' }
+		},
+		onSuccess: (data) => {
+			if (data?.redirectTo) {
+				router.push(data.redirectTo)
+			}
 		}
+	})
+
+	const handleLogin = async (e: React.FormEvent) => {
+		e.preventDefault()
+		mutation.mutate()
 	}
 
 	return (
@@ -71,7 +71,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 								<Input
 									id='email'
 									type='email'
-									placeholder='m@example.com'
+									placeholder='email@example.com'
 									required
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
@@ -95,9 +95,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 									onChange={(e) => setPassword(e.target.value)}
 								/>
 							</div>
-							{error && <p className='text-sm text-red-500'>{error}</p>}
-							<Button type='submit' className='w-full' disabled={isLoading}>
-								{isLoading ? 'Logging in...' : 'Login'}
+							<Button type='submit' className='w-full' disabled={mutation.isPending}>
+								{mutation.isPending ? 'Logging in...' : 'Login'}
 							</Button>
 						</div>
 						<div className='mt-4 text-center text-sm'>

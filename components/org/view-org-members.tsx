@@ -1,44 +1,17 @@
+'use client'
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { MemberRow } from '@/components/org/member-row'
-import { createClient } from '@/lib/supabase/client'
-import type { PostgrestError } from '@supabase/supabase-js'
-import { UUID } from 'crypto'
+import { useOrgMembers, useMemberProfiles } from '@/lib/react-query/queries'
 
 type ViewOrgMembersProps = {
 	orgId: number
 }
 
-type OrgMember = {
-	user_id: string
-	access_lvl: number
-	created_at: string
-}
-
-type MemberProfile = {
-	id: UUID
-	first_name: string
-	last_name: string
-	email: string
-	full_name: string
-}
-
-export async function ViewOrgMembers({ orgId }: ViewOrgMembersProps) {
-	const supabase = await createClient()
-
-	const { data: members, error: membersError } = (await supabase
-		.from('user_org_role')
-		.select('user_id, access_lvl, created_at')
-		.eq('org_id', orgId)
-		.order('created_at', { ascending: true })) as { data: OrgMember[] | null; error: PostgrestError | null }
-	if (membersError) throw membersError
-
+export function ViewOrgMembers({ orgId }: ViewOrgMembersProps) {
+	const { data: members, isLoading: membersLoading } = useOrgMembers(orgId)
 	const userIds = members?.map((member) => member.user_id) ?? []
-
-	const { data: memberProfiles, error: memberProfilesError } = (await supabase
-		.from('profiles')
-		.select('id, first_name, last_name, email, full_name')
-		.in('id', userIds)) as { data: MemberProfile[] | null; error: PostgrestError | null }
-	if (memberProfilesError) throw memberProfilesError
+	const { data: memberProfiles, isLoading: profilesLoading } = useMemberProfiles(userIds)
 
 	function getAccessLevelName(accessLevel: number) {
 		switch (accessLevel) {
@@ -53,6 +26,8 @@ export async function ViewOrgMembers({ orgId }: ViewOrgMembersProps) {
 		}
 	}
 
+	const isLoading = membersLoading || profilesLoading
+
 	return (
 		<Table>
 			<TableHeader>
@@ -64,8 +39,14 @@ export async function ViewOrgMembers({ orgId }: ViewOrgMembersProps) {
 				</TableRow>
 			</TableHeader>
 			<TableBody>
-				{memberProfiles && memberProfiles.length > 0 ? (
-					memberProfiles.map((user: MemberProfile) => (
+				{isLoading ? (
+					<TableRow>
+						<TableCell colSpan={4} className='text-center text-muted-foreground'>
+							Loading...
+						</TableCell>
+					</TableRow>
+				) : memberProfiles && memberProfiles.length > 0 ? (
+					memberProfiles.map((user) => (
 						<MemberRow
 							key={user.id}
 							userFirstName={user.first_name}
