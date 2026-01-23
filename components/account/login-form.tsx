@@ -19,24 +19,24 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 	const mutation = useMutation({
 		mutationFn: async () => {
 			const supabase = createClient()
-			const { error } = await supabase.auth.signInWithPassword({
+			const { error: signInError } = await supabase.auth.signInWithPassword({
 				email,
 				password
 			})
-			if (error) throw error
-
+			if (signInError) throw signInError
 			const {
 				data: { user },
 				error: userError
 			} = await supabase.auth.getUser()
 			if (userError) throw userError
 
-			const { data: profile } = await supabase
+			const { data: profile, error: profileError } = await supabase
 				.from('profiles')
 				.select('first_name, last_name')
 				.eq('id', user?.id)
 				.single()
 
+			if (profileError) throw profileError
 			if (!profile?.first_name || !profile?.last_name) {
 				router.push('/protected/profile-setup')
 				return
