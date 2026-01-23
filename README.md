@@ -49,7 +49,16 @@ npm run format:check
 - `npm run format` format with Prettier
 - `npm run format:check` verify formatting
 
+### Git hooks (Husky)
+
+Pre-commit hooks auto-format staged files using Prettier and locally builds the app before every commit. If you want to skip the hook (not recommended), use `git commit --no-verify`.
+
+### Deployment
+
+Vercel automatically deploys on every push, If `npm run build` fails, the deployment will fail. Ensure your code builds locally before pushing.
+
 ### Notes
 
 - shadcn components are configured via `components.json`.
 - Tailwind config lives in `tailwind.config.ts` and global styles in `app/globals.css`.
+- GitHub Actions run format checks on PRs to `main`—PRs cannot merge if formatting fails.
