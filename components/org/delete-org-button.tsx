@@ -20,15 +20,13 @@ export function DeleteOrgButton() {
 	const [open, setOpen] = useState(false)
 	const router = useRouter()
 	const params = useParams()
-	const orgId = params?.orgId as string
+	const orgId = params?.orgId as number | undefined
 	const { data: user } = useCurrentUser()
 	const deleteOrgMutation = useDeleteOrg()
 
 	const handleDelete = async () => {
-		if (!orgId || !user?.id) return
-
 		deleteOrgMutation.mutate(
-			{ orgId: parseInt(orgId), userId: user.id },
+			{ orgId: orgId as number, userId: user?.id as string },
 			{
 				onSuccess: () => {
 					router.push('/protected/orgs')

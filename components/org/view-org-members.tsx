@@ -9,8 +9,8 @@ type ViewOrgMembersProps = {
 }
 
 export function ViewOrgMembers({ orgId }: ViewOrgMembersProps) {
-	const { data: members, isLoading: membersLoading } = useOrgMembers(orgId)
-	const userIds = members?.map((member) => member.user_id) ?? []
+	const { data: orgMembers, isLoading: orgMembersLoading } = useOrgMembers(orgId)
+	const userIds = orgMembers?.map((user) => user.user_id) ?? []
 	const { data: memberProfiles, isLoading: profilesLoading } = useMemberProfiles(userIds)
 
 	function getAccessLevelName(accessLevel: number) {
@@ -26,7 +26,7 @@ export function ViewOrgMembers({ orgId }: ViewOrgMembersProps) {
 		}
 	}
 
-	const isLoading = membersLoading || profilesLoading
+	const isLoading = orgMembersLoading || profilesLoading
 
 	return (
 		<Table>
@@ -53,10 +53,10 @@ export function ViewOrgMembers({ orgId }: ViewOrgMembersProps) {
 							userLastName={user.last_name}
 							userEmail={user.email}
 							accessLevelName={getAccessLevelName(
-								members?.find((member) => member.user_id === user.id)?.access_lvl || 0
+								orgMembers?.find((member) => member.user_id === user.id)?.access_lvl || 0
 							)}
 							joinedAt={new Date(
-								members?.find((member) => member.user_id === user.id)?.created_at || ''
+								orgMembers?.find((member) => member.user_id === user.id)?.created_at || ''
 							).toLocaleDateString()}
 						/>
 					))

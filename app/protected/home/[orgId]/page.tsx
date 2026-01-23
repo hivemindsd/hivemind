@@ -1,5 +1,4 @@
-import { DeleteOrgButton } from '@/components/org/delete-org-button'
-import { ViewOrgMembers } from '@/components/org/view-org-members'
+import { OrgSettings } from '@/components/org/orgs-settings'
 
 type PageProps = {
 	params: Promise<{
@@ -16,8 +15,7 @@ export default async function Page({ params }: PageProps) {
 				<div className='pb-5'>
 					<h1 className='text-2xl font-semibold'>Homepage (aka per organization Dashboard)</h1>
 				</div>
-				<DeleteOrgButton />
-				<ViewOrgMembers orgId={orgId} />
+				<OrgSettings orgId={orgId} />
 			</div>
 		</div>
 	)

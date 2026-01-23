@@ -21,20 +21,6 @@ export function ViewOrgs() {
 	//	  }
 	// }
 
-	// placeholder while we figure out exact access level names
-	function getAccessLevelName(accessLevel: number) {
-		switch (accessLevel) {
-			case 1:
-				return 'Caretaker'
-			case 2:
-				return 'Admin'
-			case 3:
-				return 'Owner'
-			default:
-				return 'Super Admin'
-		}
-	}
-
 	return (
 		<Table>
 			<TableHeader>
@@ -49,13 +35,7 @@ export function ViewOrgs() {
 					userOrgs.map((userOrg: UserOrg) => {
 						return (
 							// OrgRow component is specifically client rendered, otherwise a server rendered component would be used and the onClick would not work
-							<OrgRow
-								key={userOrg.org_id}
-								orgId={userOrg.org_id}
-								name={userOrg.orgs.name}
-								accessLevelName={getAccessLevelName(userOrg.access_lvl)}
-								createdAt={new Date(userOrg.orgs.created_at).toLocaleDateString()}
-							/>
+							<OrgRow key={userOrg.orgs.org_id} {...userOrg} />
 						)
 					})
 				) : isLoading ? (
