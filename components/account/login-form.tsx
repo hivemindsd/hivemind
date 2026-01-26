@@ -42,7 +42,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 				return
 			}
 
-			return { redirectTo: '/protected/orgs' }
+			return { redirectTo: '/protected' }
 		},
 		onSuccess: (data) => {
 			if (data?.redirectTo) {

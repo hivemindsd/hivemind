@@ -3,8 +3,22 @@ import { AuthButton } from '@/components/account/auth-button'
 import { ThemeSwitcher } from '@/components/theme-switcher'
 import { hasEnvVars } from '@/lib/utils'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 
-export default function Home() {
+export default async function Home() {
+	// always redirect to protected page if logged in
+	// this unprotected home page will come in later if we want a landing page for non-logged in users
+
+	const supabase = await createClient()
+
+	const { data, error } = await supabase.auth.getClaims()
+	if (error || !data?.claims) {
+		redirect('/auth/login')
+	} else {
+		redirect('/protected')
+	}
+
 	return (
 		<main className='min-h-screen flex flex-col items-center'>
 			<nav className='w-full flex justify-center border-b border-b-foreground/10 h-16'>

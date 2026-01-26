@@ -40,7 +40,7 @@ export default function RootLayout({
 						// toast for SIX-SEVEN seconds
 						duration={6500}
 						position='bottom-right'
-						theme='system'
+						theme='light'
 						richColors
 						expand
 						visibleToasts={4}
@@ -48,7 +48,7 @@ export default function RootLayout({
 						offset={18}
 						toastOptions={{
 							classNames: {
-								toast: 'ring-2 ring-red-500/35 shadow-xl shadow-red-500/30'
+								toast: 'ring-2 ring-red-500/35 shadow-xl'
 							}
 						}}
 					/>

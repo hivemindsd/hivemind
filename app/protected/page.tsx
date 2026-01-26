@@ -9,6 +9,4 @@ export default async function ProtectedPage() {
 	if (error || !data?.claims) {
 		redirect('/auth/login')
 	}
-
-	return <div className='w-full'>hello world</div>
 }
