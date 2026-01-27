@@ -49,7 +49,6 @@ jobs:
         with:
           deployment-url: ${{ env.PLAYWRIGHT_BASE_URL }}
           timeout: 300 # Wait for 5 minutes before failing
-          poll-interval: 10 # Wait for 10 seconds before each retry
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps

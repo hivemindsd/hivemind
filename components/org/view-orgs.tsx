@@ -1,35 +1,15 @@
+'use client'
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import type { PostgrestError } from '@supabase/supabase-js'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 import { OrgRow } from './org-row'
+import { useUserOrgs, type UserOrg } from '@/lib/react-query/queries'
+import { useCurrentUser } from '@/lib/react-query/auth'
+import { PendingInvites } from './view-pending-invites'
+import { LoaderCircle } from 'lucide-react'
 
-export type UserOrg = {
-	org_id: number
-	access_lvl: number
-	orgs: {
-		name: string
-		org_id: number
-		created_at: string
-	}
-}
-
-export async function ViewOrgs() {
-	const supabase = await createClient()
-	const {
-		data: { user },
-		error: error
-	} = await supabase.auth.getUser()
-
-	if (error || !user) {
-		redirect('/auth/login')
-	}
-
-	const { data: userOrgs, error: orgsError } = (await supabase
-		.from('user_org_role')
-		.select('org_id, access_lvl, orgs(name, org_id, created_at)')
-		.eq('user_id', user.id)) as { data: UserOrg[] | null; error: PostgrestError | null }
-	if (orgsError) throw orgsError
+export function ViewOrgs() {
+	const { data: user } = useCurrentUser()
+	const { data: userOrgs, isLoading } = useUserOrgs(user?.id || '')
 
 	// returns an object:
 
@@ -43,51 +23,44 @@ export async function ViewOrgs() {
 	//	  }
 	// }
 
-	// placeholder while we figure out exact access level names
-	function getAccessLevelName(accessLevel: number) {
-		switch (accessLevel) {
-			case 1:
-				return 'Caretaker'
-			case 2:
-				return 'Admin'
-			case 3:
-				return 'Owner'
-			default:
-				return 'Super Admin'
-		}
-	}
-
 	return (
-		<Table>
-			<TableHeader>
-				<TableRow>
-					<TableHead>Name</TableHead>
-					<TableHead>Access level</TableHead>
-					<TableHead>Created</TableHead>
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{userOrgs && userOrgs.length > 0 ? (
-					userOrgs.map((userOrg: UserOrg) => {
-						return (
-							// OrgRow component is specifically client rendered, otherwise a server rendered component would be used and the onClick would not work
-							<OrgRow
-								key={userOrg.org_id}
-								orgId={userOrg.org_id}
-								name={userOrg.orgs.name}
-								accessLevelName={getAccessLevelName(userOrg.access_lvl)}
-								createdAt={userOrg.orgs.created_at}
-							/>
-						)
-					})
-				) : (
+		<>
+			<div className='mb-4 flex flex-col mx-auto'>
+				<PendingInvites />
+			</div>
+			<Table>
+				<TableHeader>
 					<TableRow>
-						<TableCell colSpan={3} className='text-center text-muted-foreground'>
-							No organizations found
-						</TableCell>
+						<TableHead>Name</TableHead>
+						<TableHead>Access level</TableHead>
+						<TableHead>Created</TableHead>
 					</TableRow>
-				)}
-			</TableBody>
-		</Table>
+				</TableHeader>
+				<TableBody>
+					{userOrgs && userOrgs.length > 0 ? (
+						userOrgs.map((userOrg: UserOrg) => {
+							return (
+								// OrgRow component is specifically client rendered, otherwise a server rendered component would be used and the onClick would not work
+								<OrgRow key={userOrg.orgs.org_id} {...userOrg} />
+							)
+						})
+					) : isLoading ? (
+						<TableRow>
+							<TableCell colSpan={3} className='text-center text-muted-foreground'>
+								<div className='flex justify-center items-center py-4'>
+									<LoaderCircle className='animate-spin' />
+								</div>
+							</TableCell>
+						</TableRow>
+					) : (
+						<TableRow>
+							<TableCell colSpan={3} className='text-center text-muted-foreground'>
+								No organizations found
+							</TableCell>
+						</TableRow>
+					)}
+				</TableBody>
+			</Table>
+		</>
 	)
 }

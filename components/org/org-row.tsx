@@ -3,29 +3,39 @@
 import { useRouter } from 'next/navigation'
 import { TableRow, TableCell } from '../ui/table'
 import { Button } from '../ui/button'
-import { EyeIcon } from 'lucide-react'
+import { EyeIcon, LoaderCircle } from 'lucide-react'
+import { useState } from 'react'
+import { LeaveOrgButton } from './leave-org-button'
+import type { UserOrg } from '@/lib/react-query/queries'
+import getAccessLevelName from '@/context/access-levels'
 
-type OrgRowProps = {
-	orgId: number
-	name: string
-	accessLevelName: string
-	createdAt: string
-}
-
-export function OrgRow({ orgId, name, accessLevelName, createdAt }: OrgRowProps) {
+export function OrgRow(userOrg: UserOrg) {
 	const router = useRouter()
+	const [isLoading, setIsLoading] = useState(false)
 
 	return (
 		<TableRow>
-			<TableCell>{name}</TableCell>
-			<TableCell>{accessLevelName}</TableCell>
-			<TableCell>{new Date(createdAt).toLocaleDateString()}</TableCell>
+			<TableCell>{userOrg.orgs.name}</TableCell>
+			<TableCell>{getAccessLevelName(userOrg.access_lvl)}</TableCell>
+			<TableCell>{new Date(userOrg.orgs.created_at).toLocaleDateString()}</TableCell>
 			<TableCell className='flex'>
-				<Button onClick={() => router.push(`/protected/home/${orgId}`)}>
-					View
-					<EyeIcon className='w-4 h-4' />
+				<Button
+					onClick={() => {
+						setIsLoading(true)
+						router.push(`/protected/home/${userOrg.orgs.org_id}`)
+					}}
+					disabled={isLoading}
+				>
+					{isLoading ? (
+						<LoaderCircle className='animate-spin' />
+					) : (
+						<>
+							View <EyeIcon className='w-4 h-4' />
+						</>
+					)}
 				</Button>
 			</TableCell>
+			<TableCell>{userOrg.access_lvl !== 3 && <LeaveOrgButton orgId={userOrg.orgs.org_id} />}</TableCell>
 		</TableRow>
 	)
 }

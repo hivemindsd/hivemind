@@ -9,42 +9,45 @@ import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 
 export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
+	const [firstName, setFirstName] = useState('')
+	const [lastName, setLastName] = useState('')
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [repeatPassword, setRepeatPassword] = useState('')
-	const [error, setError] = useState<string | null>(null)
-	const [isLoading, setIsLoading] = useState(false)
 	const router = useRouter()
 
-	const handleSignUp = async (e: React.FormEvent) => {
-		e.preventDefault()
-		const supabase = createClient()
-		setIsLoading(true)
-		setError(null)
+	const mutation = useMutation({
+		mutationFn: async () => {
+			if (password !== repeatPassword) {
+				throw new Error('Passwords do not match')
+			}
 
-		if (password !== repeatPassword) {
-			setError('Passwords do not match')
-			setIsLoading(false)
-			return
-		}
-
-		try {
+			const supabase = createClient()
 			const { error } = await supabase.auth.signUp({
 				email,
 				password,
 				options: {
-					emailRedirectTo: `${window.location.origin}/protected`
+					emailRedirectTo: `${window.location.origin}/protected`,
+					data: {
+						// supabase user metadata, add first and last name, done through a function on the supabase side running after sign up
+						first_name: firstName.trim(),
+						last_name: lastName.trim()
+					}
 				}
 			})
 			if (error) throw error
+		},
+		onSuccess: () => {
 			router.push('/auth/sign-up-success')
-		} catch (error: unknown) {
-			setError(error instanceof Error ? error.message : 'An error occurred')
-		} finally {
-			setIsLoading(false)
 		}
+	})
+
+	const handleSignUp = async (e: React.FormEvent) => {
+		e.preventDefault()
+		mutation.mutate()
 	}
 
 	return (
@@ -58,11 +61,33 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
 					<form onSubmit={handleSignUp}>
 						<div className='flex flex-col gap-6'>
 							<div className='grid gap-2'>
+								<Label htmlFor='first-name'>First Name</Label>
+								<Input
+									id='first-name'
+									type='text'
+									placeholder='John'
+									required
+									value={firstName}
+									onChange={(e) => setFirstName(e.target.value)}
+								/>
+							</div>
+							<div className='grid gap-2'>
+								<Label htmlFor='last-name'>Last Name</Label>
+								<Input
+									id='last-name'
+									type='text'
+									placeholder='Doe'
+									required
+									value={lastName}
+									onChange={(e) => setLastName(e.target.value)}
+								/>
+							</div>
+							<div className='grid gap-2'>
 								<Label htmlFor='email'>Email</Label>
 								<Input
 									id='email'
 									type='email'
-									placeholder='m@example.com'
+									placeholder='mail@example.com'
 									required
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
@@ -92,9 +117,8 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
 									onChange={(e) => setRepeatPassword(e.target.value)}
 								/>
 							</div>
-							{error && <p className='text-sm text-red-500'>{error}</p>}
-							<Button type='submit' className='w-full' disabled={isLoading}>
-								{isLoading ? 'Creating an account...' : 'Sign up'}
+							<Button type='submit' className='w-full' disabled={mutation.isPending}>
+								{mutation.isPending ? 'Creating an account...' : 'Sign up'}
 							</Button>
 						</div>
 						<div className='mt-4 text-center text-sm'>

@@ -12,58 +12,33 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { createClient } from '@/lib/supabase/client'
-import { PlusIcon } from 'lucide-react'
+import { PlusIcon, LoaderCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useCreateOrg } from '@/lib/react-query/mutations'
+import { useCurrentUser } from '@/lib/react-query/auth'
 
 export function CreateOrgButton() {
 	const [open, setOpen] = useState(false)
 	const [name, setName] = useState('')
-	const [error, setError] = useState<string | null>(null)
-	const [isLoading, setIsLoading] = useState(false)
 	const router = useRouter()
+	const { data: user } = useCurrentUser()
+	const createOrgMutation = useCreateOrg()
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
-		const supabase = createClient()
-		setIsLoading(true)
-		setError(null)
+		if (!user?.id) return
 
-		try {
-			// get the current user
-			const {
-				data: { user },
-				error: userError
-			} = await supabase.auth.getUser()
-			if (userError || !user) throw userError
-
-			// insert the organization
-			const { data: org, error: orgError } = await supabase.from('orgs').insert({ name: name.trim() }).select().single()
-			if (orgError) throw orgError
-
-			// update the user_org_role table with proper access level
-			const { error: relationError } = await supabase.from('user_org_role').insert({
-				user_id: user?.id,
-				org_id: org?.org_id,
-				access_lvl: 3
-			})
-
-			if (relationError) {
-				// if we fail to update the user_org_role table, delete the org.
-				await supabase.from('orgs').delete().eq('org_id', org?.org_id)
-				throw relationError
+		createOrgMutation.mutate(
+			{ name, userId: user.id },
+			{
+				onSuccess: () => {
+					setOpen(false)
+					setName('')
+					router.refresh()
+				}
 			}
-
-			// close dialog and refresh
-			setOpen(false)
-			setName('')
-			router.refresh()
-		} catch (error: unknown) {
-			setError(error instanceof Error ? error.message : 'Failed to create organization')
-		} finally {
-			setIsLoading(false)
-		}
+		)
 	}
 
 	return (
@@ -88,17 +63,21 @@ export function CreateOrgButton() {
 								value={name}
 								onChange={(e) => setName(e.target.value)}
 								required
-								disabled={isLoading}
+								disabled={createOrgMutation.isPending}
 							/>
 						</div>
-						{error && <p className='text-sm text-red-500'>{error}</p>}
 					</div>
 					<DialogFooter>
-						<Button type='button' variant='outline' onClick={() => setOpen(false)} disabled={isLoading}>
+						<Button
+							type='button'
+							variant='outline'
+							onClick={() => setOpen(false)}
+							disabled={createOrgMutation.isPending}
+						>
 							Cancel
 						</Button>
-						<Button type='submit' disabled={isLoading}>
-							{isLoading ? 'Creating...' : 'Create Organization'}
+						<Button type='submit' disabled={createOrgMutation.isPending || !user}>
+							{createOrgMutation.isPending ? <LoaderCircle className='animate-spin' /> : 'Create Organization'}
 						</Button>
 					</DialogFooter>
 				</form>
