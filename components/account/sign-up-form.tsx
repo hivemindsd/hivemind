@@ -12,6 +12,8 @@ import { useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 
 export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
+	const [firstName, setFirstName] = useState('')
+	const [lastName, setLastName] = useState('')
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [repeatPassword, setRepeatPassword] = useState('')
@@ -28,7 +30,12 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
 				email,
 				password,
 				options: {
-					emailRedirectTo: `${window.location.origin}/protected/profile-setup`
+					emailRedirectTo: `${window.location.origin}/protected`,
+					data: {
+						// supabase user metadata, add first and last name, done through a function on the supabase side running after sign up
+						first_name: firstName.trim(),
+						last_name: lastName.trim()
+					}
 				}
 			})
 			if (error) throw error
@@ -53,6 +60,28 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
 				<CardContent>
 					<form onSubmit={handleSignUp}>
 						<div className='flex flex-col gap-6'>
+							<div className='grid gap-2'>
+								<Label htmlFor='first-name'>First Name</Label>
+								<Input
+									id='first-name'
+									type='text'
+									placeholder='John'
+									required
+									value={firstName}
+									onChange={(e) => setFirstName(e.target.value)}
+								/>
+							</div>
+							<div className='grid gap-2'>
+								<Label htmlFor='last-name'>Last Name</Label>
+								<Input
+									id='last-name'
+									type='text'
+									placeholder='Doe'
+									required
+									value={lastName}
+									onChange={(e) => setLastName(e.target.value)}
+								/>
+							</div>
 							<div className='grid gap-2'>
 								<Label htmlFor='email'>Email</Label>
 								<Input

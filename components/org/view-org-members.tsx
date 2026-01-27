@@ -3,28 +3,13 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { MemberRow } from '@/components/org/member-row'
 import { useOrgMembers, useMemberProfiles } from '@/lib/react-query/queries'
+import getAccessLevelName from '@/context/access-levels'
+import { LoaderCircle } from 'lucide-react'
 
-type ViewOrgMembersProps = {
-	orgId: number
-}
-
-export function ViewOrgMembers({ orgId }: ViewOrgMembersProps) {
+export function ViewOrgMembers({ orgId }: { orgId: number }) {
 	const { data: orgMembers, isLoading: orgMembersLoading } = useOrgMembers(orgId)
 	const userIds = orgMembers?.map((user) => user.user_id) ?? []
 	const { data: memberProfiles, isLoading: profilesLoading } = useMemberProfiles(userIds)
-
-	function getAccessLevelName(accessLevel: number) {
-		switch (accessLevel) {
-			case 1:
-				return 'Caretaker'
-			case 2:
-				return 'Admin'
-			case 3:
-				return 'Owner'
-			default:
-				return 'Super Admin'
-		}
-	}
 
 	const isLoading = orgMembersLoading || profilesLoading
 
@@ -42,7 +27,9 @@ export function ViewOrgMembers({ orgId }: ViewOrgMembersProps) {
 				{isLoading ? (
 					<TableRow>
 						<TableCell colSpan={4} className='text-center text-muted-foreground'>
-							Loading...
+							<div className='flex justify-center items-center py-4'>
+								<LoaderCircle className='animate-spin' />
+							</div>
 						</TableCell>
 					</TableRow>
 				) : memberProfiles && memberProfiles.length > 0 ? (

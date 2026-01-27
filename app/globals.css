@@ -75,6 +75,11 @@
 	::file-selector-button {
 		border-color: var(--color-gray-200, currentcolor);
 	}
+	/* Add pointer cursor to buttons and elements with role="button" V4 tailwind disabled this by default */
+	button:not([disabled]),
+	[role='button']:not([disabled]) {
+		cursor: pointer;
+	}
 }
 
 @layer base {

@@ -7,6 +7,15 @@ export function makeQueryClient() {
 	const queryCache = new QueryCache({
 		onError: (error) => {
 			toast.error(`DB Query Failed: ${error.message}` || 'Failed to load data')
+			// if this error occured becaise the user is unauthenticated, send them to login
+			if (
+				error.message?.toLowerCase().includes('jwt') ||
+				error.message?.toLowerCase().includes('auth') ||
+				error.message?.toLowerCase().includes('unauthorized')
+			) {
+				// Redirect to login
+				window.location.href = '/auth/login'
+			}
 		}
 	})
 
@@ -21,6 +30,15 @@ export function makeQueryClient() {
 			mutations: {
 				onError: (error) => {
 					toast.error(`Mutation Failed: ${error.message}` || 'An error occurred')
+					// if this error occured becaise the user is unauthenticated, send them to login
+					if (
+						error.message?.toLowerCase().includes('jwt') ||
+						error.message?.toLowerCase().includes('auth') ||
+						error.message?.toLowerCase().includes('unauthorized')
+					) {
+						// Redirect to login
+						window.location.href = '/auth/login'
+					}
 				}
 			}
 		}

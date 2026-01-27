@@ -4,12 +4,14 @@ import { DeleteOrgButton } from '@/components/org/delete-org-button'
 import { ViewOrgMembers } from '@/components/org/view-org-members'
 import { useCurrentUser } from '@/lib/react-query/auth'
 import { useOrgMembers } from '@/lib/react-query/queries'
+import { InviteMemberButton } from '@/components/org/invite-org-button'
+import { ViewSentInvites } from './view-sent-invites'
 
-type OrgSettingsProps = {
-	orgId: number
-}
+import { useParams } from 'next/navigation'
 
-export function OrgSettings({ orgId }: OrgSettingsProps) {
+export function OrgSettings() {
+	const params = useParams()
+	const orgId = Number(params.orgId)
 	const { data: user } = useCurrentUser()
 	const { data: orgMembers, isLoading } = useOrgMembers(orgId)
 	const isOwner = orgMembers?.some((member) => member.user_id === user?.id && member.access_lvl === 3)
@@ -18,7 +20,15 @@ export function OrgSettings({ orgId }: OrgSettingsProps) {
 
 	return (
 		<div className='space-y-4'>
-			{isOwner && <DeleteOrgButton />}
+			{isOwner && (
+				<>
+					<div className='gap-2 flex'>
+						<DeleteOrgButton />
+						<InviteMemberButton orgId={orgId} />
+					</div>
+					<ViewSentInvites orgId={orgId} />
+				</>
+			)}
 			<ViewOrgMembers orgId={orgId} />
 		</div>
 	)

@@ -7,20 +7,7 @@ import { EyeIcon, LoaderCircle } from 'lucide-react'
 import { useState } from 'react'
 import { LeaveOrgButton } from './leave-org-button'
 import type { UserOrg } from '@/lib/react-query/queries'
-
-// placeholder while we figure out exact access level names
-function getAccessLevelName(accessLevel: number) {
-	switch (accessLevel) {
-		case 1:
-			return 'Caretaker'
-		case 2:
-			return 'Admin'
-		case 3:
-			return 'Owner'
-		default:
-			return 'Super Admin'
-	}
-}
+import getAccessLevelName from '@/context/access-levels'
 
 export function OrgRow(userOrg: UserOrg) {
 	const router = useRouter()
@@ -48,9 +35,7 @@ export function OrgRow(userOrg: UserOrg) {
 					)}
 				</Button>
 			</TableCell>
-			<TableCell>
-				<LeaveOrgButton orgId={userOrg.orgs.org_id} />
-			</TableCell>
+			<TableCell>{userOrg.access_lvl !== 3 && <LeaveOrgButton orgId={userOrg.orgs.org_id} />}</TableCell>
 		</TableRow>
 	)
 }

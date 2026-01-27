@@ -25,8 +25,6 @@ export function useCreateOrg() {
 				await supabase.from('orgs').delete().eq('org_id', org.org_id)
 				throw relationError
 			}
-
-			return org
 		},
 		onSuccess: (data, variables) => {
 			// Invalidate and refetch user orgs
@@ -50,8 +48,6 @@ export function useDeleteOrg() {
 			// Delete the organization
 			const { error: orgError } = await supabase.from('orgs').delete().eq('org_id', orgId)
 			if (orgError) throw orgError
-
-			return { orgId }
 		},
 		onSuccess: (data, variables) => {
 			// Invalidate and refetch user orgs
@@ -69,8 +65,6 @@ export function useLeaveOrg() {
 
 			const { error } = await supabase.from('user_org_role').delete().eq('org_id', orgId).eq('user_id', userId)
 			if (error) throw error
-
-			return { orgId }
 		},
 		onSuccess: (data, variables) => {
 			// Invalidate and refetch user orgs
@@ -86,19 +80,186 @@ export function useUpdateProfile() {
 		mutationFn: async ({ userId, firstName, lastName }: { userId: string; firstName: string; lastName: string }) => {
 			const supabase = createClient()
 
-			const { data, error } = await supabase
+			const { error } = await supabase
 				.from('profiles')
 				.update({ first_name: firstName.trim(), last_name: lastName.trim() })
 				.eq('id', userId)
-				.select()
-				.single()
 
 			if (error) throw error
-			return data
+		},
+		onSuccess: (data, variables) => {
+			// Invalidate profile queries
+			queryClient.invalidateQueries({ queryKey: ['profiles', variables.userId] })
+		}
+	})
+}
+
+export function useInviteMember() {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: async ({
+			orgId,
+			inviterId,
+			inviteeEmail,
+			accessLvl
+		}: {
+			orgId: number
+			inviterId: string
+			inviteeEmail: string
+			accessLvl: number
+		}) => {
+			const supabase = createClient()
+
+			// get inviter email
+			const { data } = await supabase.auth.getClaims()
+			const inviterEmail = data?.claims.email
+
+			// make sure inviter is not inviting themselves
+			if (inviterEmail === inviteeEmail.trim().toLowerCase()) {
+				throw new Error('You cannot invite yourself!')
+			}
+
+			// Check if email already has a user account and is a member
+			const { data: existingUser } = await supabase
+				.from('profiles')
+				.select('id')
+				.eq('email', inviteeEmail.trim().toLowerCase())
+				.maybeSingle()
+
+			if (existingUser) {
+				// User exists, check if they're already a member
+				const { data: existingMember, error: memberError } = await supabase
+					.from('user_org_role')
+					.select('user_id')
+					.eq('org_id', orgId)
+					.eq('user_id', existingUser.id)
+					.maybeSingle()
+
+				if (memberError) throw memberError
+
+				if (existingMember) {
+					throw new Error('User is already a member of the organization')
+				}
+			}
+
+			// make sure there is not already a pending invite for this email and org
+			const { data: existingInvite, error: inviteError } = await supabase
+				.from('invites')
+				.select('invite_id')
+				.eq('org_id', orgId)
+				.eq('invitee_email', inviteeEmail.trim().toLowerCase())
+				.eq('status', 'pending')
+				.maybeSingle()
+
+			if (inviteError) throw inviteError
+
+			if (existingInvite) {
+				throw new Error('There is already a pending invite for this email and organization')
+			}
+
+			// Create the invite
+			const { error } = await supabase.from('invites').insert({
+				org_id: orgId,
+				inviter_id: inviterId,
+				invitee_email: inviteeEmail.trim().toLowerCase(),
+				access_lvl: accessLvl,
+				status: 'pending'
+			})
+
+			if (error) throw error
 		},
 		onSuccess: () => {
-			// Invalidate profile queries
+			// Invalidate invites
+			queryClient.invalidateQueries({ queryKey: ['invites'] })
+		}
+	})
+}
+
+export function useAcceptInvite() {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: async ({ inviteId, userId }: { inviteId: string; userId: string }) => {
+			const supabase = createClient()
+
+			// Get the invite details
+			const { data: invite, error: inviteError } = await supabase
+				.from('invites')
+				.select('*')
+				.eq('invite_id', inviteId)
+				.eq('status', 'pending')
+				.single()
+
+			if (inviteError) throw inviteError
+			if (!invite) throw new Error('Invite not found or already processed')
+
+			// Check if invite is expired
+			if (new Date(invite.expires_at) < new Date()) {
+				throw new Error('Invite has expired')
+			}
+
+			// Add user to org
+			const { error: roleError } = await supabase.from('user_org_role').insert({
+				user_id: userId,
+				org_id: invite.org_id,
+				access_lvl: invite.access_lvl
+			})
+
+			if (roleError) throw roleError
+
+			// Update invite status to accepted
+			const { error: updateError } = await supabase
+				.from('invites')
+				.update({ status: 'accepted' })
+				.eq('invite_id', inviteId)
+
+			if (updateError) throw updateError
+		},
+		onSuccess: (data, variables) => {
+			// Invalidate invites
+			queryClient.invalidateQueries({ queryKey: ['invites'] })
+			queryClient.invalidateQueries({ queryKey: ['orgs', variables.userId] })
+			queryClient.invalidateQueries({ queryKey: ['orgMembers'] })
 			queryClient.invalidateQueries({ queryKey: ['profiles'] })
+		}
+	})
+}
+
+export function useRejectInvite() {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: async ({ inviteId }: { inviteId: string }) => {
+			const supabase = createClient()
+
+			// Update invite status to rejected
+			const { error } = await supabase.from('invites').update({ status: 'rejected' }).eq('invite_id', inviteId)
+
+			if (error) throw error
+		},
+		onSuccess: () => {
+			// Invalidate invites
+			queryClient.invalidateQueries({ queryKey: ['invites'] })
+		}
+	})
+}
+
+export function useRetractInvite() {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: async ({ inviteId }: { inviteId: string }) => {
+			const supabase = createClient()
+
+			// Delete the invite
+			const { error } = await supabase.from('invites').delete().eq('invite_id', inviteId).eq('status', 'pending')
+
+			if (error) throw error
+		},
+		onSuccess: () => {
+			// Invalidate org invites
+			queryClient.invalidateQueries({ queryKey: ['invites'] })
 		}
 	})
 }
