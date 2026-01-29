@@ -3,13 +3,14 @@ import { AuthButton } from '@/components/account/auth-button'
 import { ThemeSwitcher } from '@/components/theme-switcher'
 import { hasEnvVars } from '@/lib/utils'
 import Link from 'next/link'
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { SidebarProvider, SidebarTrigger, } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
+
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<SidebarProvider>
-			<AppSidebar />
+			<AppSidebar/>
 			<SidebarTrigger />
 			<main className='flex w-full flex-col items-center'>
 				<div className='flex-1 w-full flex flex-col gap-2'>

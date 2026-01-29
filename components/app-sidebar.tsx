@@ -7,7 +7,7 @@ import {
 	SidebarGroupContent,
 	SidebarMenu,
 	SidebarMenuItem,
-	SidebarMenuButton
+	SidebarMenuButton,
 } from '@/components/ui/sidebar'
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
@@ -28,8 +28,8 @@ async function Username() {
 	const user = data?.claims
 
 	return user ? (
-		<div className='flex flex-col items-center gap-4'>
-			<span className='hidden md:block'>{user.email}</span>
+		<div className='flex flex-col mx-auto gap-4'>
+			<span className='md:block '>{user.email}</span>
 		</div>
 	) : (
 		<>ERROR</>
@@ -40,15 +40,20 @@ export function AppSidebar() {
 	const items = [
 		{
 			title: 'Home',
-			url: '#'
+			url: '#',
 		},
 		{
 			title: 'Inbox',
-			url: '#'
+			url: '#',
 		},
 		{
 			title: 'Settings',
-			url: '#'
+			url: '#',
+		}
+		,
+		{
+			title: 'Organizations',
+			url: '#',
 		}
 	]
 
