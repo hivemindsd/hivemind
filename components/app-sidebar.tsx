@@ -8,7 +8,12 @@ import {
 	SidebarMenu,
 	SidebarMenuItem,
 	SidebarMenuButton,
+	SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
+
+import {
+  Command,
+} from "lucide-react"
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 
@@ -28,8 +33,8 @@ async function Username() {
 	const user = data?.claims
 
 	return user ? (
-		<div className='flex flex-col mx-auto gap-4'>
-			<span className='md:block '>{user.email}</span>
+		<div className='mx-auto'>
+			<span className='font-bold'>{user.email}</span>
 		</div>
 	) : (
 		<>ERROR</>
@@ -40,20 +45,19 @@ export function AppSidebar() {
 	const items = [
 		{
 			title: 'Home',
-			url: '#',
+			url: '#'
 		},
 		{
 			title: 'Inbox',
-			url: '#',
+			url: '#'
 		},
 		{
 			title: 'Settings',
-			url: '#',
-		}
-		,
+			url: '#'
+		},
 		{
 			title: 'Organizations',
-			url: '#',
+			url: '#'
 		}
 	]
 
@@ -61,12 +65,22 @@ export function AppSidebar() {
 		<Sidebar variant='floating'>
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel>Hivemind</SidebarGroupLabel>
+					<SidebarMenuButton className="mb-2.5" size="lg" asChild>
+						<a href="#">
+							<div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+								<Command className="size-4" />
+							</div>
+							<div className="grid flex-1 text-left text-sm leading-tight">
+								<span className="truncate font-medium">Hivemind</span>
+
+							</div>
+						</a>
+					</SidebarMenuButton>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{items.map((item) => (
 								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton asChild>
+									<SidebarMenuButton className="text-2xl my-1"  asChild>
 										<a href={item.url}>
 											<span>{item.title}</span>
 										</a>
