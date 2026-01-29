@@ -2,7 +2,6 @@ import { redirect } from 'next/navigation'
 
 import { createClient } from '@/lib/supabase/server'
 
-
 export default async function ProtectedPage() {
 	const supabase = await createClient()
 
@@ -10,6 +9,4 @@ export default async function ProtectedPage() {
 	if (error || !data?.claims) {
 		redirect('/auth/login')
 	}
-
-
 }

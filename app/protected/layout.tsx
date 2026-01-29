@@ -3,9 +3,7 @@ import { AuthButton } from '@/components/account/auth-button'
 import { ThemeSwitcher } from '@/components/theme-switcher'
 import { hasEnvVars } from '@/lib/utils'
 import Link from 'next/link'
-import { Button } from "@/components/ui/button"
-import { DropdownMenuSubmenu } from "@/components/dropdown-demo"
-
+import { DropdownMenuSubmenu } from '@/components/dropdown-demo'
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
 	return (
@@ -18,20 +16,16 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 								Hivemind
 							</Link>
 						</div>
-			
-						{!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
 
+						{!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
 					</div>
 				</nav>
 
 				<nav className='w-full flex justify-center border-b bg-muted/30 h-24'>
-                    <div className='w-full max-w-5xl flex items-center justify-center  px-5 gap-4'>
-                        <DropdownMenuSubmenu />
-                    </div>
-                </nav>
-				
-
-
+					<div className='w-full max-w-5xl flex items-center justify-center  px-5 gap-4'>
+						<DropdownMenuSubmenu />
+					</div>
+				</nav>
 
 				<div className='flex-1 flex flex-col gap-2 p-5'>{children}</div>
 				<footer className='w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-4 py-4'>
