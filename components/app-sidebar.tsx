@@ -13,10 +13,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { LogoutButton } from '@/components/account/logout-button'
 import { EnvVarWarning } from '@/components/env-var-warning'
 import { hasEnvVars } from '@/lib/utils'
-import { getCurrentServerUser } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function AppSidebar() {
-	const user = await getCurrentServerUser()
+	const supabase = await createClient()
+
+	// You can also use getUser() which will be slower.
+	const { data } = await supabase.auth.getClaims()
+
+	const user = data?.claims
 
 	const items = [
 		{

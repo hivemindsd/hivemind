@@ -1,7 +1,12 @@
-import { getCurrentServerUser } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function Page() {
-	const user = await getCurrentServerUser()
+	const supabase = await createClient()
+
+	// You can also use getUser() which will be slower.
+	const { data } = await supabase.auth.getClaims()
+
+	const user = data?.claims
 
 	return (
 		<div className='space-y-4 w-full justify-center items-center'>
