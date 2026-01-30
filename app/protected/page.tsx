@@ -1,12 +1,10 @@
 import { redirect } from 'next/navigation'
 
-import { createClient } from '@/lib/supabase/server'
+import { getCurrentServerUser } from '@/lib/supabase/server'
 
 export default async function ProtectedPage() {
-	const supabase = await createClient()
-
-	const { data, error } = await supabase.auth.getClaims()
-	if (error || !data?.claims) {
+	const user = await getCurrentServerUser()
+	if (!user) {
 		redirect('/auth/login')
 	}
 }

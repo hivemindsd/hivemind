@@ -13,16 +13,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PlusIcon, LoaderCircle } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useCreateOrg } from '@/lib/react-query/mutations'
-import { useCurrentUser } from '@/lib/react-query/auth'
+import { useCurrentClientUser } from '@/lib/react-query/auth'
 
 export function CreateOrgButton() {
 	const [open, setOpen] = useState(false)
 	const [name, setName] = useState('')
-	const router = useRouter()
-	const { data: user } = useCurrentUser()
+	const { data: user } = useCurrentClientUser()
 	const createOrgMutation = useCreateOrg()
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -35,7 +33,6 @@ export function CreateOrgButton() {
 				onSuccess: () => {
 					setOpen(false)
 					setName('')
-					router.refresh()
 				}
 			}
 		)

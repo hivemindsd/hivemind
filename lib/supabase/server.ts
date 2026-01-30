@@ -26,3 +26,25 @@ export async function createClient() {
 		}
 	})
 }
+// this will fetch from the server user session, use for SSR pages
+export async function getCurrentServerSession() {
+	const supabase = await createClient()
+	const {
+		data: { session },
+		error
+	} = await supabase.auth.getSession()
+
+	if (error) throw error
+	return session
+}
+// this will fetch from the server user, use for SSR pages
+export async function getCurrentServerUser() {
+	const supabase = await createClient()
+	const {
+		data: { user },
+		error
+	} = await supabase.auth.getUser()
+
+	if (error) throw error
+	return user ?? null
+}

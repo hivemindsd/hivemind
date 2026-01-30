@@ -15,14 +15,14 @@ import { Label } from '@/components/ui/label'
 import { UserPlusIcon, LoaderCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useInviteMember } from '@/lib/react-query/mutations'
-import { useCurrentUser } from '@/lib/react-query/auth'
+import { useCurrentClientUser } from '@/lib/react-query/auth'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export function InviteMemberButton({ orgId }: { orgId: number }) {
 	const [open, setOpen] = useState(false)
 	const [email, setEmail] = useState('')
 	const [accessLvl, setAccessLvl] = useState('1')
-	const { data: user } = useCurrentUser()
+	const { data: user } = useCurrentClientUser()
 	const inviteMutation = useInviteMember()
 
 	const handleSubmit = async (e: React.FormEvent) => {

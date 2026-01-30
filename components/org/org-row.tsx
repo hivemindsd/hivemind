@@ -22,7 +22,7 @@ export function OrgRow(userOrg: UserOrg) {
 				<Button
 					onClick={() => {
 						setIsLoading(true)
-						router.push(`/protected/home/${userOrg.orgs.org_id}`)
+						router.push(`/protected/orgs/${userOrg.orgs.org_id}`)
 					}}
 					disabled={isLoading}
 				>

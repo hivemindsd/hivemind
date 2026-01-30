@@ -11,15 +11,13 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog'
 import { LoaderCircle, LogOut } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useLeaveOrg } from '@/lib/react-query/mutations'
-import { useCurrentUser } from '@/lib/react-query/auth'
+import { useCurrentClientUser } from '@/lib/react-query/auth'
 
 export function LeaveOrgButton({ orgId }: { orgId: number }) {
 	const [open, setOpen] = useState(false)
-	const router = useRouter()
-	const { data: user } = useCurrentUser()
+	const { data: user } = useCurrentClientUser()
 	const leaveOrgMutation = useLeaveOrg()
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -31,7 +29,6 @@ export function LeaveOrgButton({ orgId }: { orgId: number }) {
 			{
 				onSuccess: () => {
 					setOpen(false)
-					router.refresh()
 				}
 			}
 		)

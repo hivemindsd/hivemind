@@ -112,8 +112,16 @@ export function useInviteMember() {
 			const supabase = createClient()
 
 			// get inviter email
-			const { data } = await supabase.auth.getClaims()
-			const inviterEmail = data?.claims.email
+			const {
+				data: { user },
+				error: userError
+			} = await supabase.auth.getUser()
+
+			if (userError) throw userError
+			const inviterEmail = user?.email
+			if (!inviterEmail) {
+				throw new Error('Inviter email not found')
+			}
 
 			// make sure inviter is not inviting themselves
 			if (inviterEmail === inviteeEmail.trim().toLowerCase()) {

@@ -14,14 +14,14 @@ import { TrashIcon, LoaderCircle } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useDeleteOrg } from '@/lib/react-query/mutations'
-import { useCurrentUser } from '@/lib/react-query/auth'
+import { useCurrentClientUser } from '@/lib/react-query/auth'
 
 export function DeleteOrgButton() {
 	const [open, setOpen] = useState(false)
 	const router = useRouter()
 	const params = useParams()
 	const orgId = params?.orgId as number | undefined
-	const { data: user } = useCurrentUser()
+	const { data: user } = useCurrentClientUser()
 	const deleteOrgMutation = useDeleteOrg()
 
 	const handleDelete = async () => {

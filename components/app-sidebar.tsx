@@ -1,3 +1,5 @@
+"use client'"
+
 import {
 	Sidebar,
 	SidebarContent,
@@ -8,52 +10,20 @@ import {
 	SidebarMenuItem,
 	SidebarMenuButton
 } from '@/components/ui/sidebar'
-
 import { Command } from 'lucide-react'
-
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-
-import { createClient } from '@/lib/supabase/server'
 import { LogoutButton } from '@/components/account/logout-button'
-
-import Link from 'next/link'
 import { EnvVarWarning } from '@/components/env-var-warning'
 import { hasEnvVars } from '@/lib/utils'
+import { getCurrentServerUser } from '@/lib/supabase/server'
 
-async function Username() {
-	const supabase = await createClient()
+export async function AppSidebar() {
+	const user = await getCurrentServerUser()
 
-	// You can also use getUser() which will be slower.
-	const { data } = await supabase.auth.getClaims()
-
-	const user = data?.claims
-
-	return user ? (
-		<div className='mx-auto'>
-			<span className='font-bold'>{user.email}</span>
-		</div>
-	) : (
-		<>ERROR</>
-	)
-}
-
-export function AppSidebar() {
 	const items = [
 		{
 			title: 'Home',
-			url: '#'
-		},
-		{
-			title: 'Inbox',
-			url: '#'
-		},
-		{
-			title: 'Settings',
-			url: '#'
-		},
-		{
-			title: 'Organizations',
-			url: '#'
+			url: '/protected/orgs'
 		}
 	]
 
@@ -62,7 +32,7 @@ export function AppSidebar() {
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarMenuButton className='mb-2.5' size='lg' asChild>
-						<a href='#'>
+						<a href='/protected'>
 							<div className='bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg'>
 								<Command className='size-4' />
 							</div>
@@ -75,7 +45,7 @@ export function AppSidebar() {
 						<SidebarMenu>
 							{items.map((item) => (
 								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton className='text-2xl my-1' asChild>
+									<SidebarMenuButton className='text-xl my-1' asChild>
 										<a href={item.url}>
 											<span>{item.title}</span>
 										</a>
@@ -91,13 +61,21 @@ export function AppSidebar() {
 					<SidebarMenuItem>
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
-								<SidebarMenuButton>{!hasEnvVars ? <EnvVarWarning /> : <Username />}</SidebarMenuButton>
+								<SidebarMenuButton variant='outline'>
+									{!hasEnvVars ? (
+										<EnvVarWarning />
+									) : (
+										<div className='mx-auto'>
+											<span className='font-bold'>{user?.email ?? 'unknown'}</span>
+										</div>
+									)}
+								</SidebarMenuButton>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent side='top' className='w-[--radix-popper-anchor-width]'>
 								<DropdownMenuItem>
-									<Link className='mx-auto' href='#'>
+									<a className='mx-auto' href='/protected/account'>
 										Account
-									</Link>
+									</a>
 								</DropdownMenuItem>
 								<DropdownMenuItem>
 									<LogoutButton />
