@@ -10,13 +10,15 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 	return (
 		<SidebarProvider>
 			<AppSidebar />
-			<SidebarTrigger className='ml-1 mt-4' size={'icon-lg'} />
+			<div className='w-0 overflow-visible relative z-50'>
+				<SidebarTrigger className='ml-1 mt-4 pointer-events-auto' size={'icon-lg'} />
+			</div>
 			<main className='flex w-full flex-col items-center'>
 				<div className='flex-1 w-full flex flex-col gap-2'>
 					<nav className='w-full flex justify-center border-b border-b-foreground/10 h-16'>
-						<div className='w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm'>
+						<div className='w-full max-w-7xl flex justify-between px-5 items-center text-sm'>
 							<div className='flex gap-5 items-center'>
-								<Link href={'/'} className='font-dancing-script text-4xl font-bold'>
+								<Link href={'/protected'} className='pl-6 font-dancing-script text-4xl font-bold'>
 									Hivemind
 								</Link>
 							</div>

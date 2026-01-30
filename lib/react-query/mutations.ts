@@ -8,6 +8,10 @@ export function useCreateOrg() {
 		mutationFn: async ({ name, userId }: { name: string; userId: string }) => {
 			const supabase = createClient()
 
+			if (name.trim() === '') {
+				throw new Error('Organization name cannot be empty')
+			}
+
 			// Insert the organization
 			const { data: org, error: orgError } = await supabase.from('orgs').insert({ name: name.trim() }).select().single()
 
@@ -80,6 +84,10 @@ export function useUpdateProfile() {
 		mutationFn: async ({ userId, firstName, lastName }: { userId: string; firstName: string; lastName: string }) => {
 			const supabase = createClient()
 
+			if (firstName.trim() === '' || lastName.trim() === '') {
+				throw new Error('First name or last name cannot be empty')
+			}
+
 			const { error } = await supabase
 				.from('profiles')
 				.update({ first_name: firstName.trim(), last_name: lastName.trim() })
@@ -112,8 +120,16 @@ export function useInviteMember() {
 			const supabase = createClient()
 
 			// get inviter email
-			const { data } = await supabase.auth.getClaims()
-			const inviterEmail = data?.claims.email
+			const {
+				data: { user },
+				error: userError
+			} = await supabase.auth.getUser()
+
+			if (userError) throw userError
+			const inviterEmail = user?.email
+			if (!inviterEmail) {
+				throw new Error('Inviter email not found')
+			}
 
 			// make sure inviter is not inviting themselves
 			if (inviterEmail === inviteeEmail.trim().toLowerCase()) {

@@ -3,12 +3,12 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { OrgRow } from './org-row'
 import { useUserOrgs, type UserOrg } from '@/lib/react-query/queries'
-import { useCurrentUser } from '@/lib/react-query/auth'
+import { useCurrentClientUser } from '@/lib/react-query/auth'
 import { PendingInvites } from './view-pending-invites'
 import { LoaderCircle } from 'lucide-react'
 
 export function ViewOrgs() {
-	const { data: user } = useCurrentUser()
+	const { data: user } = useCurrentClientUser()
 	const { data: userOrgs, isLoading } = useUserOrgs(user?.id || '')
 
 	// returns an object:

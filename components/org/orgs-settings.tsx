@@ -2,7 +2,7 @@
 
 import { DeleteOrgButton } from '@/components/org/delete-org-button'
 import { ViewOrgMembers } from '@/components/org/view-org-members'
-import { useCurrentUser } from '@/lib/react-query/auth'
+import { useCurrentClientUser } from '@/lib/react-query/auth'
 import { useOrgMembers } from '@/lib/react-query/queries'
 import { InviteMemberButton } from '@/components/org/invite-org-button'
 import { ViewSentInvites } from './view-sent-invites'
@@ -12,7 +12,7 @@ import { useParams } from 'next/navigation'
 export function OrgSettings() {
 	const params = useParams()
 	const orgId = Number(params.orgId)
-	const { data: user } = useCurrentUser()
+	const { data: user } = useCurrentClientUser()
 	const { data: orgMembers, isLoading } = useOrgMembers(orgId)
 	const isOwner = orgMembers?.some((member) => member.user_id === user?.id && member.access_lvl === 3)
 
