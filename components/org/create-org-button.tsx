@@ -3,13 +3,15 @@
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
+	DialogBody,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog-to-drawer'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PlusIcon, LoaderCircle } from 'lucide-react'
@@ -31,8 +33,8 @@ export function CreateOrgButton() {
 			{ name, userId: user.id },
 			{
 				onSuccess: () => {
-					setOpen(false)
 					setName('')
+					setOpen(false)
 				}
 			}
 		)
@@ -51,28 +53,27 @@ export function CreateOrgButton() {
 						<DialogTitle>Create Organization</DialogTitle>
 						<DialogDescription>Create a new organization. You will be set as the owner.</DialogDescription>
 					</DialogHeader>
-					<div className='grid gap-4 py-4'>
-						<div className='grid gap-2'>
-							<Label>Organization Name</Label>
-							<Input
-								id='name'
-								placeholder='My Organization'
-								value={name}
-								onChange={(e) => setName(e.target.value)}
-								required
-								disabled={createOrgMutation.isPending}
-							/>
+					<DialogBody>
+						<div className='grid gap-4 py-4'>
+							<div className='grid gap-2'>
+								<Label>Organization Name</Label>
+								<Input
+									id='name'
+									placeholder='My Organization'
+									value={name}
+									onChange={(e) => setName(e.target.value)}
+									required
+									disabled={createOrgMutation.isPending}
+								/>
+							</div>
 						</div>
-					</div>
+					</DialogBody>
 					<DialogFooter>
-						<Button
-							type='button'
-							variant='outline'
-							onClick={() => setOpen(false)}
-							disabled={createOrgMutation.isPending}
-						>
-							Cancel
-						</Button>
+						<DialogClose asChild>
+							<Button type='button' variant='outline' disabled={createOrgMutation.isPending}>
+								Close
+							</Button>
+						</DialogClose>
 						<Button type='submit' disabled={createOrgMutation.isPending || !user}>
 							{createOrgMutation.isPending ? <LoaderCircle className='animate-spin' /> : 'Create Organization'}
 						</Button>
