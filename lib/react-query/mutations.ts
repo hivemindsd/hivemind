@@ -8,6 +8,10 @@ export function useCreateOrg() {
 		mutationFn: async ({ name, userId }: { name: string; userId: string }) => {
 			const supabase = createClient()
 
+			if (name.trim() === '') {
+				throw new Error('Organization name cannot be empty')
+			}
+
 			// Insert the organization
 			const { data: org, error: orgError } = await supabase.from('orgs').insert({ name: name.trim() }).select().single()
 
@@ -79,6 +83,10 @@ export function useUpdateProfile() {
 	return useMutation({
 		mutationFn: async ({ userId, firstName, lastName }: { userId: string; firstName: string; lastName: string }) => {
 			const supabase = createClient()
+
+			if (firstName.trim() === '' || lastName.trim() === '') {
+				throw new Error('First name or last name cannot be empty')
+			}
 
 			const { error } = await supabase
 				.from('profiles')

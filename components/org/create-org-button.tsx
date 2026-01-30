@@ -33,8 +33,8 @@ export function CreateOrgButton() {
 			{ name, userId: user.id },
 			{
 				onSuccess: () => {
-					setName('')
 					setOpen(false)
+					setName('')
 				}
 			}
 		)

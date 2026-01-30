@@ -3,13 +3,15 @@
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
+	DialogBody,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog-to-drawer'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { UserPlusIcon, LoaderCircle } from 'lucide-react'
@@ -33,7 +35,7 @@ export function InviteMemberButton({ orgId }: { orgId: number }) {
 			{
 				orgId,
 				inviterId: user.id,
-				inviteeEmail: email,
+				inviteeEmail: email.trim(),
 				accessLvl: parseInt(accessLvl)
 			},
 			{
@@ -61,37 +63,41 @@ export function InviteMemberButton({ orgId }: { orgId: number }) {
 							Invite a new member to your organization. They&apos;ll receive a notification to join.
 						</DialogDescription>
 					</DialogHeader>
-					<div className='grid gap-4 py-4'>
-						<div className='grid gap-2'>
-							<Label htmlFor='email'>Email Address</Label>
-							<Input
-								id='email'
-								type='email'
-								placeholder='user@example.com'
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								required
-								disabled={inviteMutation.isPending}
-							/>
+					<DialogBody>
+						<div className='grid gap-4 py-4'>
+							<div className='grid gap-2'>
+								<Label htmlFor='email'>Email Address</Label>
+								<Input
+									id='email'
+									type='email'
+									placeholder='user@example.com'
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
+									required
+									disabled={inviteMutation.isPending}
+								/>
+							</div>
+							<div className='grid gap-2'>
+								<Label htmlFor='access-level'>Access Level</Label>
+								<Select value={accessLvl} onValueChange={setAccessLvl} disabled={inviteMutation.isPending}>
+									<SelectTrigger id='access-level'>
+										<SelectValue placeholder='Select access level' />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value='1'>Caretaker</SelectItem>
+										<SelectItem value='2'>Admin</SelectItem>
+										<SelectItem value='3'>Owner</SelectItem>
+									</SelectContent>
+								</Select>
+							</div>
 						</div>
-						<div className='grid gap-2'>
-							<Label htmlFor='access-level'>Access Level</Label>
-							<Select value={accessLvl} onValueChange={setAccessLvl} disabled={inviteMutation.isPending}>
-								<SelectTrigger id='access-level'>
-									<SelectValue placeholder='Select access level' />
-								</SelectTrigger>
-								<SelectContent>
-									<SelectItem value='1'>Caretaker</SelectItem>
-									<SelectItem value='2'>Admin</SelectItem>
-									<SelectItem value='3'>Owner</SelectItem>
-								</SelectContent>
-							</Select>
-						</div>
-					</div>
+					</DialogBody>
 					<DialogFooter>
-						<Button type='button' variant='outline' onClick={() => setOpen(false)} disabled={inviteMutation.isPending}>
-							Cancel
-						</Button>
+						<DialogClose asChild>
+							<Button type='button' variant='outline' disabled={inviteMutation.isPending}>
+								Cancel
+							</Button>
+						</DialogClose>
 						<Button type='submit' disabled={inviteMutation.isPending || !user}>
 							{inviteMutation.isPending ? <LoaderCircle className='animate-spin' /> : 'Send Invite'}
 						</Button>

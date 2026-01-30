@@ -3,13 +3,15 @@
 import { Button } from '@/components/ui/button'
 import {
 	Dialog,
+	DialogBody,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger
-} from '@/components/ui/dialog'
+} from '@/components/ui/dialog-to-drawer'
 import { TrashIcon, LoaderCircle } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -49,10 +51,15 @@ export function DeleteOrgButton() {
 						Are you sure you want to delete this organization? This action cannot be undone.
 					</DialogDescription>
 				</DialogHeader>
+				<DialogBody>
+					<div className='py-2' />
+				</DialogBody>
 				<DialogFooter>
-					<Button type='button' variant='outline' onClick={() => setOpen(false)} disabled={deleteOrgMutation.isPending}>
-						Cancel
-					</Button>
+					<DialogClose asChild>
+						<Button type='button' variant='outline' disabled={deleteOrgMutation.isPending}>
+							Cancel
+						</Button>
+					</DialogClose>
 					<Button
 						type='button'
 						variant='destructive'
