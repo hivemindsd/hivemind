@@ -3,7 +3,7 @@ import { AuthButton } from '@/components/account/auth-button'
 import { ThemeSwitcher } from '@/components/theme-switcher'
 import { hasEnvVars } from '@/lib/utils'
 import Link from 'next/link'
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { SidebarProvider, SidebarTrigger} from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
