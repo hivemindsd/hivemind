@@ -3,7 +3,6 @@ import { AuthButton } from '@/components/account/auth-button'
 import { ThemeSwitcher } from '@/components/theme-switcher'
 import { hasEnvVars } from '@/lib/utils'
 import Link from 'next/link'
-import { DropdownMenuSubmenu } from '@/components/dropdown-demo'
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
 	return (
@@ -18,12 +17,6 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 						</div>
 
 						{!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
-					</div>
-				</nav>
-
-				<nav className='w-full flex justify-center border-b bg-muted/30 h-24'>
-					<div className='w-full max-w-5xl flex items-center justify-center  px-5 gap-4'>
-						<DropdownMenuSubmenu />
 					</div>
 				</nav>
 

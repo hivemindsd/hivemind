@@ -1,0 +1,87 @@
+'use client'
+
+import { Button } from '@/components/ui/button'
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { PlusIcon, LoaderCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useCreateOrg } from '@/lib/react-query/mutations'
+import { useCurrentUser } from '@/lib/react-query/auth'
+
+export function CaseHistoryDialogue() {
+	const [open, setOpen] = useState(false)
+	const [name, setName] = useState('')
+	const router = useRouter()
+	const { data: user } = useCurrentUser()
+	const createOrgMutation = useCreateOrg()
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault()
+		if (!user?.id) return
+
+		createOrgMutation.mutate(
+			{ name, userId: user.id },
+			{
+				onSuccess: () => {
+					setOpen(false)
+					setName('')
+					router.refresh()
+				}
+			}
+		)
+	}
+
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
+				<Button variant='secondary'>
+					Case History <PlusIcon className='w-4 h-4' />
+				</Button>
+			</DialogTrigger>
+			<DialogContent>
+				<form onSubmit={handleSubmit}>
+					<DialogHeader>
+						<DialogTitle>Create Organization</DialogTitle>
+						<DialogDescription>Create a new organization. You will be set as the owner.</DialogDescription>
+					</DialogHeader>
+					<div className='grid gap-4 py-4'>
+						<div className='grid gap-2'>
+							<Label>Organization Name</Label>
+							<Input
+								id='name'
+								placeholder='My Organization'
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+								required
+								disabled={createOrgMutation.isPending}
+							/>
+						</div>
+					</div>
+					<DialogFooter>
+						<Button
+							type='button'
+							variant='outline'
+							onClick={() => setOpen(false)}
+							disabled={createOrgMutation.isPending}
+						>
+							Cancel
+						</Button>
+						<Button type='submit' disabled={createOrgMutation.isPending || !user}>
+							{createOrgMutation.isPending ? <LoaderCircle className='animate-spin' /> : 'Create Organization'}
+						</Button>
+					</DialogFooter>
+				</form>
+			</DialogContent>
+		</Dialog>
+	)
+}

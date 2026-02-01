@@ -1,79 +1,68 @@
 'use client'
 
 import * as React from 'react'
-import { useRouter } from 'next/navigation'
+import { CaseHistoryDialogue } from '@/components/tasks/button-case-history'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuGroup,
-	DropdownMenuItem,
-	DropdownMenuPortal,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
-	DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { CreateTaskDialogue } from './tasks/button-task-create'
 
-export function DropdownMenuSubmenu() {
-	const router = useRouter()
-	const [label, setLabel] = useState('Open Menu')
-
-	// const items = [
-	// 	{ path: '/protected/care-instructions', label: 'Care Instructions' },
-	// 	{ path: '/protected/case-history', label: 'Case History' },
-	// 	{ path: '/protected/tasks', label: 'Tasks To-Do' },
-	// 	{ path: '/protected/parentage', label: 'Parentage' }
-	// ]
-
-	const navigateTo = (path: string, newLabel: string) => {
-		setLabel(newLabel) // Update the button text
-		router.push(path) // Change the page
-	}
+export function TaskDropdownMenu() {
+	// const router = useRouter()
+	const [isDialogOpen, setIsDialogOpen] = useState(false)
 
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				{/* Changed to "Menu" for a cleaner nav look */}
-				<Button variant='default' className='h-8 px-8 text-lg text-bg-black min-w-[360px bg-green-300 hover:bg-emerald-600'>
-					{label}
-				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent className='w-56'>
-				<DropdownMenuGroup>
-					<DropdownMenuItem onClick={() => navigateTo('/protected/care-instructions', 'Care Instructions')}>
-						Care Instructions
-					</DropdownMenuItem>
-					<DropdownMenuItem onClick={() => navigateTo('/protected/case-history', 'Case History')}>
-						Case History
-					</DropdownMenuItem>
-					<DropdownMenuSub>
-						<DropdownMenuSubTrigger>Tasks</DropdownMenuSubTrigger>
-						<DropdownMenuPortal>
-							<DropdownMenuSubContent>
-								{/* create is for superadmin only */}
-								<DropdownMenuItem onClick={() => navigateTo('/protected/tasks/create', 'Create')}>
-									Create
-								</DropdownMenuItem>
-								<DropdownMenuItem onClick={() => navigateTo('/protected/tasks/modify', 'Modify')}>
-									Modify
-								</DropdownMenuItem>
-							</DropdownMenuSubContent>
-						</DropdownMenuPortal>
-					</DropdownMenuSub>
+		<>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button
+						// variant='default'
+						className='justify-center h-8 px-8 text-lg text-bg-black min-w-[360px bg-green-300 hover:bg-emerald-600'
+					>
+						Open Menu
+					</Button>
+				</DropdownMenuTrigger>
 
-					{/* needs to be for superadmin only */}
-					<DropdownMenuItem onClick={() => navigateTo('/protected/parentage', 'Parentage')}>Parentage</DropdownMenuItem>
-					<DropdownMenuItem onClick={() => navigateTo('/protected/schedule', 'Schedule for Case')}>
-						Schedule for Case
+				<DropdownMenuContent>
+					<DropdownMenuItem
+						onSelect={(e) => {
+							e.preventDefault()
+							//   setTimeout(() => {
+							setIsDialogOpen(true)
+							//   }, 0);
+						}}
+					>
+						Create Task
 					</DropdownMenuItem>
-					<DropdownMenuItem onClick={() => navigateTo('/protected/take-note', 'Take a Note')}>
-						Take a Note
+
+					<DropdownMenuItem>
+						<CreateTaskDialogue
+							open={false}
+							setOpen={function (open: boolean): void {
+								throw new Error('Function not implemented.')
+							}}
+						/>
 					</DropdownMenuItem>
-					<DropdownMenuItem onClick={() => navigateTo('/protected/to-do', 'To-Do')}>To-Do</DropdownMenuItem>
-				</DropdownMenuGroup>
-			</DropdownMenuContent>
-		</DropdownMenu>
+
+					<DropdownMenuItem>
+						<CaseHistoryDialogue />
+					</DropdownMenuItem>
+
+					<DropdownMenuItem>
+						<CaseHistoryDialogue />
+					</DropdownMenuItem>
+
+					<DropdownMenuItem>
+						<CaseHistoryDialogue />
+					</DropdownMenuItem>
+
+					<DropdownMenuItem>
+						<CaseHistoryDialogue />
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+
+			<CreateTaskDialogue open={isDialogOpen} setOpen={setIsDialogOpen} />
+		</>
 	)
 }

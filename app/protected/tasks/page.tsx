@@ -1,9 +1,11 @@
+import { TaskDropdownMenu } from '@/components/dropdown-demo'
+
 export default function TaskPage() {
 	return (
-		<div className='space-y-4'>
-			<h1 className='text-3xl font-bold tracking-tight'>Tasks</h1>
-			<p className='text-muted-foreground'>Either create or modify task</p>
-			<div className='border rounded-lg p-6'>Content goes here...</div>
-		</div>
+		<nav className='w-full flex justify-center border-b bg-muted/30 h-24'>
+			<div className='w-full max-w-5xl flex items-center justify-center  px-5 gap-4'>
+				<TaskDropdownMenu />
+			</div>
+		</nav>
 	)
 }
