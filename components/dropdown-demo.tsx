@@ -38,7 +38,7 @@ export function TaskDropdownMenu() {
 					<DropdownMenuItem>
 						<CreateTaskDialogue
 							open={false}
-							setOpen={function (open: boolean): void {
+							setOpen={function (): void {
 								throw new Error('Function not implemented.')
 							}}
 						/>
