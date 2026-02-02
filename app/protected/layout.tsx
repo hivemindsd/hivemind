@@ -5,9 +5,9 @@ import { hasEnvVars } from '@/lib/utils'
 import Link from 'next/link'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/app-sidebar'
-import TaskList from '@/components/ui/task-list'
+import  TaskList  from '@/components/ui/task-list'
 
-export default function ProtectedLayout() {
+export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<SidebarProvider>
 			<AppSidebar />
@@ -24,9 +24,8 @@ export default function ProtectedLayout() {
 							{!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
 						</div>
 					</nav>
-					<div className='flex-1 flex flex-col gap-2 p-5'>
-						<TaskList />
-					</div>
+					<div className='flex-1 flex flex-col gap-2 p-5'>{<TaskList/>}{children}</div>
+					
 
 					<footer className='w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-4 py-4'>
 						<p>Powered by sdmay26-03</p>

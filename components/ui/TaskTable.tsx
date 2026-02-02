@@ -65,7 +65,7 @@ export const columns: ColumnDef<Task>[] = [
 		accessorKey: 'tank_id',
 		header: 'Tank ID',
 		cell: ({ row }) => {
-			const id_num: number = row.getValue('tank_id')
+			const id_num: string = row.getValue('tank_id')
 			return <div className='text-center'>{id_num}</div>
 		}
 	},
@@ -108,7 +108,7 @@ export function TaskTable({ columns, data }: TaskTableProps) {
 					onOpenChange={(open) => !open && setSelectedTask(null)}
 				/>
 			)}
-			<div className={'overflow-hidden rounded-md border -ml-4' + (isMobile ? ' max-w-full' : '')}>
+			<div className={'overflow-hidden rounded-md border -ml-5' + (isMobile ? ' max-w-fit' : '')}>
 				<Table>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
@@ -130,6 +130,17 @@ export function TaskTable({ columns, data }: TaskTableProps) {
 									key={row.id}
 									data-state={row.getIsSelected() && 'selected'}
 									onClick={() => setSelectedTask(row.original)}
+									role='button'
+									tabIndex={0}
+									className='cursor-pointer'
+									aria-label={`Open task ${row.original.task_name}`}
+									onKeyDown={(e)=>{
+										if (e.key === 'Enter' || e.key === ' ')
+										{
+											e.preventDefault()
+											setSelectedTask(row.original)
+										}
+									}}
 								>
 									{row.getVisibleCells().map((cell) => (
 										<TableCell className={isMobile ? 'overflow-hidden' : 'w-3'} key={cell.id}>
