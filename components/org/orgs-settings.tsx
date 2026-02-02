@@ -1,11 +1,8 @@
 'use client'
 
 import { DeleteOrgButton } from '@/components/org/delete-org-button'
-import { ViewOrgMembers } from '@/components/org/view-org-members'
 import { useCurrentClientUser } from '@/lib/react-query/auth'
 import { useOrgMembers } from '@/lib/react-query/queries'
-import { InviteMemberButton } from '@/components/org/invite-org-button'
-import { ViewSentInvites } from './view-sent-invites'
 
 import { useParams } from 'next/navigation'
 
@@ -24,12 +21,9 @@ export function OrgSettings() {
 				<>
 					<div className='gap-2 flex'>
 						<DeleteOrgButton />
-						<InviteMemberButton orgId={orgId} />
 					</div>
-					<ViewSentInvites orgId={orgId} />
 				</>
 			)}
-			<ViewOrgMembers orgId={orgId} />
 		</div>
 	)
 }

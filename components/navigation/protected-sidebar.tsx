@@ -1,0 +1,37 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+import { AppSidebar } from '@/components/navigation/app-sidebar'
+import { SidebarTrigger } from '@/components/ui/sidebar'
+import { useEffect, useState } from 'react'
+
+function isOrgRoute(pathname: string | null) {
+	if (!pathname) return false
+	return /^\/protected\/orgs\/\d+/.test(pathname)
+}
+
+export function ProtectedSidebar() {
+	const pathname = usePathname()
+	const [isMounted, setIsMounted] = useState(false)
+
+	useEffect(() => {
+		setIsMounted(true)
+	}, [])
+
+	if (!isMounted) {
+		return null
+	}
+
+	if (!isOrgRoute(pathname)) {
+		return null
+	}
+
+	return (
+		<>
+			<AppSidebar />
+			<div className='w-0 overflow-visible relative z-50'>
+				<SidebarTrigger className='ml-1 mt-4 pointer-events-auto' size={'icon-lg'} />
+			</div>
+		</>
+	)
+}

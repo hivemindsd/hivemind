@@ -24,23 +24,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 				password
 			})
 			if (signInError) throw signInError
-			const {
-				data: { user },
-				error: userError
-			} = await supabase.auth.getUser()
-			if (userError) throw userError
-
-			const { data: profile, error: profileError } = await supabase
-				.from('profiles')
-				.select('first_name, last_name')
-				.eq('id', user?.id)
-				.single()
-
-			if (profileError) throw profileError
-			if (!profile?.first_name || !profile?.last_name) {
-				router.push('/protected/profile-setup')
-				return
-			}
 
 			return { redirectTo: '/protected' }
 		},

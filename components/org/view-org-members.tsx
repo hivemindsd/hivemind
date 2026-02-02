@@ -5,8 +5,11 @@ import { MemberRow } from '@/components/org/member-row'
 import { useOrgMembers, useMemberProfiles } from '@/lib/react-query/queries'
 import getAccessLevelName from '@/context/access-levels'
 import { LoaderCircle } from 'lucide-react'
+import { useParams } from 'next/navigation'
 
-export function ViewOrgMembers({ orgId }: { orgId: number }) {
+export function ViewOrgMembers() {
+	const params = useParams()
+	const orgId = Number(params.orgId)
 	const { data: orgMembers, isLoading: orgMembersLoading } = useOrgMembers(orgId)
 	const userIds = orgMembers?.map((user) => user.user_id) ?? []
 	const { data: memberProfiles, isLoading: profilesLoading } = useMemberProfiles(userIds)

@@ -1,28 +1,22 @@
 import { EnvVarWarning } from '@/components/env-var-warning'
-import { AuthButton } from '@/components/account/auth-button'
 import { ThemeSwitcher } from '@/components/theme-switcher'
 import { hasEnvVars } from '@/lib/utils'
-import Link from 'next/link'
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { AppSidebar } from '@/components/app-sidebar'
+import { SidebarProvider } from '@/components/ui/sidebar'
+import { ProtectedSidebar } from '@/components/navigation/protected-sidebar'
+import { ProtectedNavActions } from '@/components/navigation/protected-nav-actions'
+import { ProtectedNavHomeLink } from '@/components/navigation/protected-nav-home-link'
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<SidebarProvider>
-			<AppSidebar />
-			<div className='w-0 overflow-visible relative z-50'>
-				<SidebarTrigger className='ml-1 mt-4 pointer-events-auto' size={'icon-lg'} />
-			</div>
+			<ProtectedSidebar />
 			<main className='flex w-full flex-col items-center'>
 				<div className='flex-1 w-full flex flex-col gap-2'>
 					<nav className='w-full flex justify-center border-b border-b-foreground/10 h-16'>
-						<div className='w-full max-w-7xl flex justify-between px-5 items-center text-sm'>
-							<div className='flex gap-5 items-center'>
-								<Link href={'/protected'} className='pl-6 font-dancing-script text-4xl font-bold'>
-									Hivemind
-								</Link>
-							</div>
-							{!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
+						<div className='w-full max-w-7xl flex justify-between px-3 items-center text-sm gap-3'>
+							<ProtectedNavHomeLink />
+							{!hasEnvVars && <EnvVarWarning />}
+							<ProtectedNavActions />
 						</div>
 					</nav>
 					<div className='flex-1 flex flex-col gap-2 p-5'>{children}</div>

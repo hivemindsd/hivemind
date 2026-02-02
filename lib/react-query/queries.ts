@@ -3,14 +3,16 @@ import { createClient } from '@/lib/supabase/client'
 import type { PostgrestError } from '@supabase/supabase-js'
 import { UUID } from 'crypto'
 
+export type Org = {
+	org_id: number
+	name: string
+	created_at: string
+}
+
 export type UserOrg = {
 	org_id: number
 	access_lvl: number
-	orgs: {
-		name: string
-		org_id: number
-		created_at: string
-	}
+	orgs: Org
 }
 
 export type OrgMember = {
@@ -128,6 +130,42 @@ export function useSentInvites(orgId: number) {
 				.select('*')
 				.eq('org_id', orgId)
 				.order('created_at', { ascending: false })) as { data: Invite[] | null; error: PostgrestError | null }
+
+			if (error) throw error
+			return data
+		},
+		enabled: !!orgId
+	})
+}
+
+export function useVerifyOrgMembership(userId: string, orgId: number) {
+	return useQuery({
+		queryKey: ['verifyOrgMembership', userId, orgId],
+		queryFn: async () => {
+			const supabase = createClient()
+			const { data, error } = (await supabase
+				.from('user_org_role')
+				.select('user_id')
+				.eq('user_id', userId)
+				.eq('org_id', orgId)
+				.maybeSingle()) as { data: { user_id: string } | null; error: PostgrestError | null }
+
+			if (error) throw error
+			return !!data
+		},
+		enabled: !!userId && !!orgId
+	})
+}
+
+export function useOrgDetails(orgId: number) {
+	return useQuery({
+		queryKey: ['orgDetails', orgId],
+		queryFn: async () => {
+			const supabase = createClient()
+			const { data, error } = (await supabase.from('orgs').select('*').eq('org_id', orgId).maybeSingle()) as {
+				data: Org | null
+				error: PostgrestError | null
+			}
 
 			if (error) throw error
 			return data

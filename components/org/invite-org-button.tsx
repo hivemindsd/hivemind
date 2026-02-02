@@ -19,8 +19,11 @@ import { useState } from 'react'
 import { useInviteMember } from '@/lib/react-query/mutations'
 import { useCurrentClientUser } from '@/lib/react-query/auth'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useParams } from 'next/navigation'
 
-export function InviteMemberButton({ orgId }: { orgId: number }) {
+export function InviteMemberButton() {
+	const params = useParams()
+	const orgId = Number(params.orgId)
 	const [open, setOpen] = useState(false)
 	const [email, setEmail] = useState('')
 	const [accessLvl, setAccessLvl] = useState('1')
