@@ -11,7 +11,8 @@ import {
 	SidebarMenuButton,
 	SidebarMenuSub,
 	SidebarMenuSubItem,
-	SidebarMenuSubButton
+	SidebarMenuSubButton,
+	useSidebar
 } from '@/components/ui/sidebar'
 import {
 	Command,
@@ -49,6 +50,7 @@ export function AppSidebar() {
 	const pathname = usePathname()
 	const router = useRouter()
 	const isMobile = useIsMobile()
+	const { state, toggleSidebar } = useSidebar()
 	const orgId = useMemo(() => {
 		const match = pathname?.match(/^\/protected\/orgs\/(\d+)/)
 		return match?.[1] ?? null
@@ -82,6 +84,22 @@ export function AppSidebar() {
 
 	const [orgMenuOpen, setOrgMenuOpen] = useState(true)
 	const [caretakingMenuOpen, setCaretakingMenuOpen] = useState(true)
+
+	const handleOrgClick = () => {
+		if (state === 'collapsed') {
+			toggleSidebar()
+			return
+		}
+		setOrgMenuOpen((open) => !open)
+	}
+
+	const handleCaretakingClick = () => {
+		if (state === 'collapsed') {
+			toggleSidebar()
+			return
+		}
+		setCaretakingMenuOpen((open) => !open)
+	}
 
 	const handleLogout = async () => {
 		const supabase = createClient()
@@ -122,7 +140,7 @@ export function AppSidebar() {
 								<SidebarMenuButton
 									className='text-xl my-1 justify-between w-full'
 									tooltip='Organization'
-									onClick={() => setOrgMenuOpen((open) => !open)}
+									onClick={handleOrgClick}
 								>
 									<div className='flex items-center gap-2'>
 										<Building2 className='size-4' />
@@ -155,7 +173,7 @@ export function AppSidebar() {
 								<SidebarMenuButton
 									className='text-xl my-1 justify-between w-full'
 									tooltip='Caretaking'
-									onClick={() => setCaretakingMenuOpen((open) => !open)}
+									onClick={handleCaretakingClick}
 								>
 									<div className='flex items-center gap-2'>
 										<FolderHeart className='size-4' />
