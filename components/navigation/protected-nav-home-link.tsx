@@ -10,7 +10,7 @@ export function ProtectedNavHomeLink() {
 	const href = orgId ? `/protected/orgs/${orgId}` : '/protected/orgs'
 
 	return (
-		<Link href={href} className='pl-7 font-dancing-script text-4xl font-bold'>
+		<Link href={href} className='pl-7 ml-2 font-dancing-script text-4xl font-bold'>
 			Hivemind
 		</Link>
 	)

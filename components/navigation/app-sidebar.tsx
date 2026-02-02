@@ -25,7 +25,8 @@ import {
 	MoreVertical,
 	LogOut,
 	Box,
-	FolderHeart
+	FolderHeart,
+	ArrowRightLeft
 } from 'lucide-react'
 import {
 	DropdownMenu,
@@ -40,39 +41,27 @@ import { Separator } from '@/components/ui/separator'
 import { EnvVarWarning } from '@/components/env-var-warning'
 import { cn, hasEnvVars } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useIsMobile } from '@/hooks/use-mobile'
 import Link from 'next/link'
+import { useUserOrgs } from '@/lib/react-query/queries'
+import { useCurrentClientUser } from '@/lib/react-query/auth'
 
 export function AppSidebar() {
-	const [email, setEmail] = useState<{ email?: string } | null>(null)
 	const pathname = usePathname()
 	const router = useRouter()
 	const isMobile = useIsMobile()
 	const { state, toggleSidebar } = useSidebar()
+	const { data: currentUser } = useCurrentClientUser()
+	const userId = currentUser?.id ?? ''
+	const userEmail = currentUser?.email
+	const { data: userOrgs } = useUserOrgs(userId)
+	const isUserOnlyInOneOrg = (userOrgs?.length ?? 0) === 1
 	const orgId = useMemo(() => {
 		const match = pathname?.match(/^\/protected\/orgs\/(\d+)/)
 		return match?.[1] ?? null
 	}, [pathname])
-
-	useEffect(() => {
-		let isMounted = true
-		const supabase = createClient()
-		;(async () => {
-			const { data, error } = await supabase.auth.getClaims()
-			if (!isMounted) return
-			if (error) {
-				setEmail(null)
-				return
-			}
-			setEmail(data?.claims.email ? { email: data.claims.email } : null)
-		})()
-
-		return () => {
-			isMounted = false
-		}
-	}, [])
 
 	const items = [
 		{
@@ -200,6 +189,20 @@ export function AppSidebar() {
 			</SidebarContent>
 			<SidebarFooter>
 				<SidebarMenu>
+					{!isUserOnlyInOneOrg && (
+						<SidebarMenuItem>
+							<SidebarMenuButton
+								asChild
+								tooltip='Switch Organization'
+								className='justify-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 bg-sidebar-accent hover:bg-sidebar-accent-hover active:bg-sidebar-accent-active text-sidebar-accent-foreground'
+							>
+								<Link href='/protected/orgs'>
+									<ArrowRightLeft className='size-4' />
+									<span className='group-data-[collapsible=icon]:hidden'>Switch Organization</span>
+								</Link>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+					)}
 					<SidebarMenuItem>
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
@@ -217,7 +220,7 @@ export function AppSidebar() {
 											</div>
 											<div className='grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden'>
 												<span className='truncate font-medium'>Account</span>
-												<span className='text-muted-foreground truncate text-xs'>{email?.email ?? 'unknown'}</span>
+												<span className='text-muted-foreground truncate text-xs'>{userEmail ?? 'unknown'}</span>
 											</div>
 											<MoreVertical className='ml-auto size-4 group-data-[collapsible=icon]:hidden' />
 										</>
@@ -237,7 +240,7 @@ export function AppSidebar() {
 										</div>
 										<div className='grid flex-1 text-left text-sm leading-tight'>
 											<span className='truncate font-medium'>Account</span>
-											<span className='text-muted-foreground truncate text-xs'>{email?.email ?? 'unknown'}</span>
+											<span className='text-muted-foreground truncate text-xs'>{userEmail ?? 'unknown'}</span>
 										</div>
 									</div>
 								</DropdownMenuLabel>
