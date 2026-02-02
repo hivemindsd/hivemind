@@ -109,7 +109,7 @@ export function AppSidebar() {
 						<SidebarMenu>
 							{items.map((item) => (
 								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton className='text-xl my-1' asChild>
+									<SidebarMenuButton className='text-xl my-1' asChild tooltip={item.title}>
 										<Link href={item.url}>
 											<item.icon className='size-4' />
 											<span>{item.title}</span>
@@ -121,6 +121,7 @@ export function AppSidebar() {
 							<SidebarMenuItem>
 								<SidebarMenuButton
 									className='text-xl my-1 justify-between w-full'
+									tooltip='Organization'
 									onClick={() => setOrgMenuOpen((open) => !open)}
 								>
 									<div className='flex items-center gap-2'>
@@ -153,6 +154,7 @@ export function AppSidebar() {
 							<SidebarMenuItem>
 								<SidebarMenuButton
 									className='text-xl my-1 justify-between w-full'
+									tooltip='Caretaking'
 									onClick={() => setCaretakingMenuOpen((open) => !open)}
 								>
 									<div className='flex items-center gap-2'>
@@ -186,6 +188,7 @@ export function AppSidebar() {
 								<SidebarMenuButton
 									size='lg'
 									className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
+									tooltip='Account'
 								>
 									{!hasEnvVars ? (
 										<EnvVarWarning />
@@ -222,7 +225,7 @@ export function AppSidebar() {
 								</DropdownMenuLabel>
 								<DropdownMenuSeparator />
 								<DropdownMenuGroup>
-									<DropdownMenuItem asChild>
+									<DropdownMenuItem asChild className='cursor-pointer'>
 										<Link href='/protected/account'>
 											<Settings className='size-4' />
 											Account settings
@@ -230,7 +233,7 @@ export function AppSidebar() {
 									</DropdownMenuItem>
 								</DropdownMenuGroup>
 								<DropdownMenuSeparator />
-								<DropdownMenuItem onSelect={handleLogout}>
+								<DropdownMenuItem onSelect={handleLogout} className='cursor-pointer'>
 									<LogOut className='size-4' />
 									Log out
 								</DropdownMenuItem>
