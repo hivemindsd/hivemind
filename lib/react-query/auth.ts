@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
@@ -34,5 +34,15 @@ export function useCurrentClientUserClaims() {
 		},
 		staleTime: 5 * 60 * 1000,
 		retry: false
+	})
+}
+
+export function useResestPassword() {
+	return useMutation({
+		mutationFn: async ({ password }: { password: string }) => {
+			const supabase = createClient()
+			const { error } = await supabase.auth.updateUser({ password })
+			if (error) throw error
+		}
 	})
 }

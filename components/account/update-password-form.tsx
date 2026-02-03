@@ -1,33 +1,32 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useResestPassword } from '@/lib/react-query/auth'
 
 export function UpdatePasswordForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
 	const [password, setPassword] = useState('')
+	const [confirmPassword, setConfirmPassword] = useState('')
 	const router = useRouter()
+	const resetPassword = useResestPassword()
 
-	const mutation = useMutation({
-		mutationFn: async () => {
-			const supabase = createClient()
-			const { error } = await supabase.auth.updateUser({ password })
-			if (error) throw error
-		},
-		onSuccess: () => {
-			router.push('/protected')
-		}
-	})
-
+	const passwordsMatch = password === confirmPassword
 	const handleUpdatePassword = async (e: React.FormEvent) => {
 		e.preventDefault()
-		mutation.mutate()
+		if (!passwordsMatch) return
+		resetPassword.mutate(
+			{ password },
+			{
+				onSuccess: () => {
+					router.push('/protected')
+				}
+			}
+		)
 	}
 
 	return (
@@ -51,8 +50,22 @@ export function UpdatePasswordForm({ className, ...props }: React.ComponentProps
 									onChange={(e) => setPassword(e.target.value)}
 								/>
 							</div>
-							<Button type='submit' className='w-full' disabled={mutation.isPending}>
-								{mutation.isPending ? 'Saving...' : 'Save new password'}
+							<div className='grid gap-2'>
+								<Label htmlFor='confirm-password'>Confirm new password</Label>
+								<Input
+									id='confirm-password'
+									type='password'
+									placeholder='Confirm new password'
+									required
+									value={confirmPassword}
+									onChange={(e) => setConfirmPassword(e.target.value)}
+								/>
+								{confirmPassword.length > 0 && !passwordsMatch && (
+									<p className='text-sm text-destructive'>Passwords do not match.</p>
+								)}
+							</div>
+							<Button type='submit' className='w-full' disabled={resetPassword.isPending}>
+								{resetPassword.isPending ? 'Saving...' : 'Save new password'}
 							</Button>
 						</div>
 					</form>
