@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { AccountButton } from '@/components/account/accout-button'
 import { LogoutButton } from '@/components/account/logout-button'
+import { useEffect, useState } from 'react'
 
 function isOrgRoute(pathname: string | null) {
 	if (!pathname) return false
@@ -13,27 +12,17 @@ function isOrgRoute(pathname: string | null) {
 
 export function ProtectedNavActions() {
 	const pathname = usePathname()
-	const [isAuthed, setIsAuthed] = useState(false)
+	const [isMounted, setIsMounted] = useState(false)
 
 	useEffect(() => {
-		let isMounted = true
-		const supabase = createClient()
-		;(async () => {
-			const { data, error } = await supabase.auth.getClaims()
-			if (!isMounted) return
-			if (error || !data?.claims) {
-				setIsAuthed(false)
-				return
-			}
-			setIsAuthed(true)
-		})()
-
-		return () => {
-			isMounted = false
-		}
+		setIsMounted(true)
 	}, [])
 
-	if (isOrgRoute(pathname) || !isAuthed) {
+	if (!isMounted) {
+		return null
+	}
+
+	if (isOrgRoute(pathname)) {
 		return null
 	}
 
