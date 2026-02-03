@@ -9,7 +9,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
 		<div className='fixed inset-0 z-50 flex min-h-[400px] w-full items-center justify-center bg-background p-6'>
 			<Card className='w-full max-w-md'>
 				<CardHeader>
-					<CardTitle className='text-2xl text-red-600'>Something went wrong</CardTitle>
+					<CardTitle className='text-2xl'>Something went wrong</CardTitle>
 					<CardDescription>An error occurred while loading this page</CardDescription>
 				</CardHeader>
 				<CardContent className='space-y-4'>

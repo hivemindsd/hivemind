@@ -7,7 +7,7 @@ export default async function Page({ params }: { params: Promise<{ orgId: string
 
 	return (
 		<div className='space-y-4 w-full justify-center items-center'>
-			<div className='flex-col mx-auto max-w-5xl flex gap-4'>
+			<div className='flex-col mx-auto max-w-5xl flex'>
 				<div className='pb-5'>
 					<h1 className='text-2xl font-semibold'>Members of org = {orgId}</h1>
 				</div>
