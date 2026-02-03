@@ -45,7 +45,6 @@ import { useMemo, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useIsMobile } from '@/hooks/use-mobile'
 import Link from 'next/link'
-import { useUserOrgs } from '@/lib/react-query/queries'
 import { useCurrentClientUser } from '@/lib/react-query/auth'
 
 export function AppSidebar() {
@@ -54,10 +53,9 @@ export function AppSidebar() {
 	const isMobile = useIsMobile()
 	const { state, toggleSidebar } = useSidebar()
 	const { data: currentUser } = useCurrentClientUser()
-	const userId = currentUser?.id ?? ''
-	const userEmail = currentUser?.email
-	const { data: userOrgs } = useUserOrgs(userId)
-	const isUserOnlyInOneOrg = (userOrgs?.length ?? 0) === 1
+	const userEmail = currentUser?.email ?? ''
+	const userFirstName = currentUser?.user_metadata.first_name ?? ''
+	const userLastName = currentUser?.user_metadata.last_name ?? ''
 	const orgId = useMemo(() => {
 		const match = pathname?.match(/^\/protected\/orgs\/(\d+)/)
 		return match?.[1] ?? null
@@ -188,21 +186,19 @@ export function AppSidebar() {
 				</SidebarGroup>
 			</SidebarContent>
 			<SidebarFooter>
-				<SidebarMenu>
-					{!isUserOnlyInOneOrg && (
-						<SidebarMenuItem>
-							<SidebarMenuButton
-								asChild
-								tooltip='Switch Organization'
-								className='justify-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 bg-sidebar-accent hover:bg-sidebar-accent-hover active:bg-sidebar-accent-active text-sidebar-accent-foreground'
-							>
-								<Link href='/protected/orgs'>
-									<ArrowRightLeft className='size-4' />
-									<span className='group-data-[collapsible=icon]:hidden'>Switch Organization</span>
-								</Link>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-					)}
+				<SidebarMenu className='gap-2'>
+					<SidebarMenuItem>
+						<SidebarMenuButton
+							asChild
+							tooltip='Switch Organization'
+							className='justify-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 bg-sidebar-accent hover:bg-sidebar-accent-hover active:bg-sidebar-accent-active text-sidebar-accent-foreground'
+						>
+							<Link href='/protected/orgs'>
+								<ArrowRightLeft className='size-4' />
+								<span className='group-data-[collapsible=icon]:hidden'>Switch Organization</span>
+							</Link>
+						</SidebarMenuButton>
+					</SidebarMenuItem>
 					<SidebarMenuItem>
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
@@ -219,7 +215,7 @@ export function AppSidebar() {
 												<CircleUserRound className='size-4' />
 											</div>
 											<div className='grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden'>
-												<span className='truncate font-medium'>Account</span>
+												<span className='truncate font-medium'>{userFirstName + ' ' + userLastName}</span>
 												<span className='text-muted-foreground truncate text-xs'>{userEmail ?? 'unknown'}</span>
 											</div>
 											<MoreVertical className='ml-auto size-4 group-data-[collapsible=icon]:hidden' />
@@ -239,7 +235,7 @@ export function AppSidebar() {
 											<CircleUserRound className='size-4' />
 										</div>
 										<div className='grid flex-1 text-left text-sm leading-tight'>
-											<span className='truncate font-medium'>Account</span>
+											<span className='truncate font-medium'>{userFirstName + ' ' + userLastName}</span>
 											<span className='text-muted-foreground truncate text-xs'>{userEmail ?? 'unknown'}</span>
 										</div>
 									</div>
@@ -247,7 +243,7 @@ export function AppSidebar() {
 								<DropdownMenuSeparator />
 								<DropdownMenuGroup>
 									<DropdownMenuItem asChild className='cursor-pointer'>
-										<Link href='/protected/account'>
+										<Link href={orgId ? `/protected/orgs/${orgId}/account` : '/protected/account'}>
 											<Settings className='size-4' />
 											Account settings
 										</Link>
