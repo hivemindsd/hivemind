@@ -34,7 +34,11 @@ export default function RootLayout({
 		<html lang='en' suppressHydrationWarning>
 			<body className={`${geistSans.className} ${dancingScript.variable} antialiased`}>
 				<ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-					<QueryProvider>{children}</QueryProvider>
+					<QueryProvider>
+						<div vaul-drawer-wrapper='' className='bg-background'>
+							{children}
+						</div>
+					</QueryProvider>
 					<Toaster
 						closeButton
 						// toast for SIX-SEVEN seconds

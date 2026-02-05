@@ -7,8 +7,9 @@ import { XIcon, LoaderCircle } from 'lucide-react'
 import { useSentInvites } from '@/lib/react-query/queries'
 import { useRetractInvite } from '@/lib/react-query/mutations'
 import getAccessLevelName from '@/context/access-levels'
-import { useCurrentUser } from '@/lib/react-query/auth'
+import { useCurrentClientUser } from '@/lib/react-query/auth'
 import { useState } from 'react'
+import { useParams } from 'next/navigation'
 
 function getStatusBadge(status: string) {
 	switch (status) {
@@ -23,10 +24,12 @@ function getStatusBadge(status: string) {
 	}
 }
 
-export function ViewSentInvites({ orgId }: { orgId: number }) {
+export function ViewSentInvites() {
+	const params = useParams()
+	const orgId = Number(params.orgId)
 	const { data: invites, isLoading } = useSentInvites(orgId)
 	const retractMutation = useRetractInvite()
-	const { data: user } = useCurrentUser()
+	const { data: user } = useCurrentClientUser()
 	const [pendingInviteId, setPendingInviteId] = useState<string | null>(null)
 
 	const handleRetract = (inviteId: string) => {
