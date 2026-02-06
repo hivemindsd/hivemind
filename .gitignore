@@ -50,3 +50,5 @@ node_modules/
 /playwright/.auth/
 
 .vscode.vercel/
+
+.idea/
