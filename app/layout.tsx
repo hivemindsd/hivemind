@@ -10,7 +10,7 @@ const APP_NAME = 'Hivemind'
 const APP_DEFAULT_TITLE = 'Hivemind - Manage your invertebrates with ease'
 const APP_TITLE_TEMPLATE = '%s - PWA App'
 const APP_DESCRIPTION = 'Hivemind is a platform for managing your invertebrates'
-const APP_SURFACE_DARK = "#18181B";
+const APP_SURFACE_DARK = '#18181B'
 
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
 
@@ -25,28 +25,28 @@ export const metadata: Metadata = {
 	appleWebApp: {
 		capable: true,
 		statusBarStyle: 'default',
-		title: APP_DEFAULT_TITLE,
+		title: APP_DEFAULT_TITLE
 		// startUpImage: [],
 	},
 	formatDetection: {
-		telephone: false,
+		telephone: false
 	},
 	openGraph: {
 		type: 'website',
 		siteName: APP_NAME,
 		title: {
 			default: APP_DEFAULT_TITLE,
-			template: APP_TITLE_TEMPLATE,
+			template: APP_TITLE_TEMPLATE
 		},
-		description: APP_DESCRIPTION,
+		description: APP_DESCRIPTION
 	},
 	twitter: {
-		card: "summary",
+		card: 'summary',
 		title: {
 			default: APP_DEFAULT_TITLE,
-			template: APP_TITLE_TEMPLATE,
+			template: APP_TITLE_TEMPLATE
 		},
-		description: APP_DESCRIPTION,
+		description: APP_DESCRIPTION
 	},
 	metadataBase: new URL(defaultUrl),
 	manifest: '/manifest.json'
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
 
 //used for the PWA top bar color
 export const viewport: Viewport = {
-	themeColor: APP_SURFACE_DARK,
+	themeColor: APP_SURFACE_DARK
 }
 
 const geistSans = Geist({
