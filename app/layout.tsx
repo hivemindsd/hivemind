@@ -50,7 +50,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-	themeColor: "#ffffff",
+	themeColor: "#0f172a",
 }
 
 const geistSans = Geist({
