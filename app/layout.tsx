@@ -5,13 +5,16 @@ import { Toaster } from '@/components/ui/sonner'
 import { QueryProvider } from '@/lib/react-query/provider'
 import './globals.css'
 
+//consts for metadata and PWA top bar color, used in the metadata and viewport exports below
 const APP_NAME = 'Hivemind'
 const APP_DEFAULT_TITLE = 'Hivemind - Manage your invertebrates with ease'
 const APP_TITLE_TEMPLATE = '%s - PWA App'
 const APP_DESCRIPTION = 'Hivemind is a platform for managing your invertebrates'
+export const APP_SURFACE_DARK = "#18181B";
 
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
 
+//used for PWA descriptions and titles on different devices
 export const metadata: Metadata = {
 	applicationName: APP_NAME,
 	title: {
@@ -49,8 +52,9 @@ export const metadata: Metadata = {
 	manifest: '/manifest.json'
 }
 
+//used for the PWA top bar color
 export const viewport: Viewport = {
-	themeColor: "#0f172a",
+	themeColor: APP_SURFACE_DARK,
 }
 
 const geistSans = Geist({
