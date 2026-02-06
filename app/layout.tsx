@@ -10,7 +10,7 @@ const APP_NAME = 'Hivemind'
 const APP_DEFAULT_TITLE = 'Hivemind - Manage your invertebrates with ease'
 const APP_TITLE_TEMPLATE = '%s - PWA App'
 const APP_DESCRIPTION = 'Hivemind is a platform for managing your invertebrates'
-export const APP_SURFACE_DARK = "#18181B";
+const APP_SURFACE_DARK = "#18181B";
 
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
 
