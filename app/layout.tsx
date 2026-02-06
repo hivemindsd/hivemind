@@ -1,16 +1,56 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Dancing_Script } from 'next/font/google'
 import { ThemeProvider } from 'next-themes'
 import { Toaster } from '@/components/ui/sonner'
 import { QueryProvider } from '@/lib/react-query/provider'
 import './globals.css'
 
+const APP_NAME = 'Hivemind'
+const APP_DEFAULT_TITLE = 'Hivemind - Manage your invertebrates with ease'
+const APP_TITLE_TEMPLATE = '%s - PWA App'
+const APP_DESCRIPTION = 'Hivemind is a platform for managing your invertebrates'
+
 const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'
 
 export const metadata: Metadata = {
+	applicationName: APP_NAME,
+	title: {
+		default: APP_DEFAULT_TITLE,
+		template: APP_TITLE_TEMPLATE
+	},
+	description: APP_DESCRIPTION,
+	appleWebApp: {
+		capable: true,
+		statusBarStyle: 'default',
+		title: APP_DEFAULT_TITLE,
+		// startUpImage: [],
+	},
+	formatDetection: {
+		telephone: false,
+	},
+	openGraph: {
+		type: 'website',
+		siteName: APP_NAME,
+		title: {
+			default: APP_DEFAULT_TITLE,
+			template: APP_TITLE_TEMPLATE,
+		},
+		description: APP_DESCRIPTION,
+	},
+	twitter: {
+		card: "summary",
+		title: {
+			default: APP_DEFAULT_TITLE,
+			template: APP_TITLE_TEMPLATE,
+		},
+		description: APP_DESCRIPTION,
+	},
 	metadataBase: new URL(defaultUrl),
-	title: 'Hivemind',
-	description: 'Hivemind is a platform for managing your invertebrates'
+	manifest: '/manifest.json'
+}
+
+export const viewport: Viewport = {
+	themeColor: "#ffffff",
 }
 
 const geistSans = Geist({
