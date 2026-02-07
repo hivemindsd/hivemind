@@ -17,6 +17,11 @@ const defaultUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` 
 //used for PWA descriptions and titles on different devices
 export const metadata: Metadata = {
 	applicationName: APP_NAME,
+	icons: {
+		icon: ['/icons/icon-192x192.png', '/icons/icon-512x512.png'],
+		apple: ['/icons/icon-152x152.png', '/icons/icon-192x192.png'],
+		shortcut: '/favicon.ico'
+	},
 	title: {
 		default: APP_DEFAULT_TITLE,
 		template: APP_TITLE_TEMPLATE
