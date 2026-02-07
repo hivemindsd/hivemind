@@ -22,7 +22,7 @@ export function OrgRow(userOrg: UserOrg) {
 				<Button
 					onClick={() => {
 						setIsLoading(true)
-						router.push(`/protected/home/${userOrg.orgs.org_id}`)
+						router.push(`/protected/orgs/${userOrg.orgs.org_id}`)
 					}}
 					disabled={isLoading}
 				>
@@ -35,7 +35,11 @@ export function OrgRow(userOrg: UserOrg) {
 					)}
 				</Button>
 			</TableCell>
-			<TableCell>{userOrg.access_lvl !== 3 && <LeaveOrgButton orgId={userOrg.orgs.org_id} />}</TableCell>
+			{userOrg.access_lvl !== 3 && (
+				<TableCell>
+					<LeaveOrgButton orgId={userOrg.orgs.org_id} />
+				</TableCell>
+			)}
 		</TableRow>
 	)
 }

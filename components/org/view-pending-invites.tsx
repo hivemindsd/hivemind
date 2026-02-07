@@ -4,14 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { CheckIcon, XIcon, LoaderCircle } from 'lucide-react'
-import { useCurrentUser } from '@/lib/react-query/auth'
+import { useCurrentClientUser } from '@/lib/react-query/auth'
 import { usePendingInvites } from '@/lib/react-query/queries'
 import { useAcceptInvite, useRejectInvite } from '@/lib/react-query/mutations'
 import getAccessLevelName from '@/context/access-levels'
 import { useState } from 'react'
 
 export function PendingInvites() {
-	const { data: user } = useCurrentUser()
+	const { data: user } = useCurrentClientUser()
 	const { data: invites, isLoading } = usePendingInvites(user?.email || '')
 	const acceptMutation = useAcceptInvite()
 	const rejectMutation = useRejectInvite()
