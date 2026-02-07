@@ -7,6 +7,12 @@ const nextConfig: NextConfig = {
 	/* config options here */
 }
 
+/**
+ * Produces the Next.js configuration, applying Serwist service-worker integration for the development server and production build phases.
+ *
+ * @param phase - The Next.js lifecycle phase value used to decide whether to apply Serwist integration
+ * @returns The NextConfig to use; when `phase` is the development server or production build, returns the configuration wrapped with Serwist (including a precache entry revision and service worker options), otherwise returns the original configuration unchanged
+ */
 export default async function config(phase: string): Promise<NextConfig> {
 	if (phase === PHASE_DEVELOPMENT_SERVER || phase === PHASE_PRODUCTION_BUILD) {
 		const revision =
