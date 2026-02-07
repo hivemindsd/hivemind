@@ -7,7 +7,7 @@ import './globals.css'
 
 //consts for metadata and PWA top bar color, used in the metadata and viewport exports below
 const APP_NAME = 'Hivemind'
-const APP_DEFAULT_TITLE = 'Hivemind - Manage your invertebrates with ease'
+const APP_DEFAULT_TITLE = 'Hivemind'
 const APP_TITLE_TEMPLATE = '%s - PWA App'
 const APP_DESCRIPTION = 'Hivemind is a platform for managing your invertebrates'
 const APP_SURFACE_DARK = '#18181B'
