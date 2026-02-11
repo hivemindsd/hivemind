@@ -32,6 +32,7 @@ interface BaseProps {
 interface RootCredenzaProps extends BaseProps {
 	open?: boolean
 	onOpenChange?: (open: boolean) => void
+	direction?: 'left' | 'bottom' | 'right' | 'top'
 }
 
 interface CredenzaProps extends BaseProps {
@@ -51,13 +52,13 @@ const useCredenzaContext = () => {
 	return context
 }
 
-const Credenza = ({ children, ...props }: RootCredenzaProps) => {
+const Credenza = ({ children, direction = 'bottom', ...props }: RootCredenzaProps) => {
 	const isDesktop = useMediaQuery('(min-width: 768px)')
 	const Credenza = isDesktop ? Dialog : Drawer
 
 	return (
 		<CredenzaContext.Provider value={{ isDesktop }}>
-			<Credenza {...props} {...(!isDesktop && { autoFocus: true })}>
+			<Credenza {...props} {...(!isDesktop && { autoFocus: true, direction })}>
 				{children}
 			</Credenza>
 		</CredenzaContext.Provider>

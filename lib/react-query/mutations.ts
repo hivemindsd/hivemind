@@ -279,3 +279,45 @@ export function useRetractInvite() {
 		}
 	})
 }
+
+export function useCreateEnclosure() {
+	const queryClient = useQueryClient()
+	return useMutation({
+		mutationFn: async ({
+			orgId,
+			species_id,
+			name,
+			location,
+			current_count
+		}: {
+			orgId: number
+			species_id: number
+			name: string
+			location: string
+			current_count: number
+		}) => {
+			const supabase = createClient()
+			if (name.trim() === '' || location.trim() === '' || location.trim() === '') {
+				throw new Error('Recieved an empty field')
+			}
+			// Insert the organization
+			const { error: enclosureError } = await supabase
+				.from('enclosure')
+				.insert({
+					org_id: orgId,
+					species_id: species_id,
+					name: name.trim(),
+					location: location.trim(),
+					current_count: current_count
+				})
+				.select()
+				.single()
+
+			if (enclosureError) throw enclosureError
+		},
+		onSuccess: (data, variables) => {
+			// Invalidate and refetch enclosures orgs
+			queryClient.invalidateQueries({ queryKey: ['tanks', variables.orgId] })
+		}
+	})
+}

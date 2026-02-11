@@ -1,4 +1,7 @@
-export default async function Page({ params }: { params: Promise<{ orgId: string }> }) {
+import { CreateEnclosureButton } from '@/components/enclosures/create-enclosure-button'
+import { EnclosureGrid } from '@/components/enclosures/enclosures-grid'
+
+export default async function Page({ params }: { params: Promise<{ orgId: number }> }) {
 	const { orgId } = await params
 
 	return (
@@ -6,7 +9,13 @@ export default async function Page({ params }: { params: Promise<{ orgId: string
 			<div className='flex-col mx-auto max-w-5xl'>
 				<div className='pb-5 flex-row flex items-center justify-between'>
 					<div className='flex-col'>
-						<h1 className='text-2xl font-semibold'>Show all enclosures for org = {orgId}</h1>
+						<div className='flex flex-row mb-2 justify-between'>
+							<h1 className='text-2xl font-semibold grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]'>
+								Enclosures for org = {orgId}
+							</h1>
+							<CreateEnclosureButton orgId={orgId} />
+						</div>
+						<EnclosureGrid orgId={orgId} />
 					</div>
 				</div>
 				<div className='flex flex-col gap-4'>
