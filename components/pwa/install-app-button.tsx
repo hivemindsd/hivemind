@@ -33,7 +33,7 @@ export function InstallAppButton() {
 			title={isIOS ? 'Tap share, then "Add to Home Screen"' : 'Install app'}
 		>
 			<Download className='size-4' />
-			Install app
+			Install
 		</button>
 	)
 }
