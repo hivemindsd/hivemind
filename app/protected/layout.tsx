@@ -5,10 +5,12 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { ProtectedSidebar } from '@/components/navigation/protected-sidebar'
 import { ProtectedNavActions } from '@/components/navigation/protected-nav-actions'
 import { ProtectedNavHomeLink } from '@/components/navigation/protected-nav-home-link'
+import { LoginInstallPrompt } from '@/components/pwa/login-install-prompt'
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<SidebarProvider>
+			<LoginInstallPrompt />
 			<ProtectedSidebar />
 			<main className='flex w-full flex-col items-center'>
 				<div className='flex-1 w-full flex flex-col gap-2'>

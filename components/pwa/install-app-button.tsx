@@ -53,7 +53,7 @@ export function InstallAppButton() {
 						<DialogTitle>Install App</DialogTitle>
 						<DialogDescription>
 							{isIOS
-								? 'To add this app to your home screen: Tap the Share button at the bottom, then scroll down and tap "Add to Home Screen".'
+								? 'To add this app to your home screen: Tap the Share button by the search bar, then scroll down and tap "Add to Home Screen".'
 								: 'To install this app, use your browser menu to add it to your home screen.'}
 						</DialogDescription>
 					</DialogHeader>
