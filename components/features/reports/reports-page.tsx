@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { ReportFilters } from './report-filters'
 import { ReportGrid } from './report-grid'
 import { ReportDetailPanel } from './report-detail'
@@ -72,7 +72,7 @@ const mockDetail: ReportDetail = {
 
 export function ReportsPage() {
 	const [selectedId, setSelectedId] = useState<string>(mockReports[0].id)
-	const selected = useMemo(() => mockDetail, [selectedId])
+	const selected = mockDetail
 
 	return (
 		<div className='space-y-4 flex flex-col min-h-0'>
