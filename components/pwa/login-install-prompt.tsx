@@ -16,12 +16,21 @@ import { Download } from 'lucide-react'
 export function LoginInstallPrompt() {
 	const { isInstallable, handleInstall } = useInstallPrompt()
 	const [showPrompt, setShowPrompt] = useState(false)
+	const [isIOS, setIsIOS] = useState(false)
 
 	useEffect(() => {
-		// Only show if installable and hasn't been dismissed this session
-		if (isInstallable && !sessionStorage.getItem('installPromptDismissed')) {
-			setShowPrompt(true)
-		}
+		// Detect iOS
+		const isApple = /iPad|iPhone|iPod/.test(navigator.userAgent)
+		setIsIOS(isApple)
+
+		// Add a small delay to allow beforeinstallprompt to fire
+		const timer = setTimeout(() => {
+			if ((isInstallable || isApple) && !sessionStorage.getItem('installPromptDismissed')) {
+				setShowPrompt(true)
+			}
+		}, 1000)
+
+		return () => clearTimeout(timer)
 	}, [isInstallable])
 
 	const handleDismiss = () => {
@@ -30,7 +39,9 @@ export function LoginInstallPrompt() {
 	}
 
 	const handleInstallClick = () => {
-		handleInstall()
+		if (isInstallable) {
+			handleInstall()
+		}
 		handleDismiss()
 	}
 
@@ -42,7 +53,11 @@ export function LoginInstallPrompt() {
 						<Download className='size-5' />
 						Install Hivemind
 					</DialogTitle>
-					<DialogDescription>Install our app for quick access and an app-like experience.</DialogDescription>
+					<DialogDescription>
+						{isIOS
+							? 'Add to your home screen for quick access. Tap Share, then "Add to Home Screen".'
+							: 'Install our app for quick access and an app-like experience.'}
+					</DialogDescription>
 				</DialogHeader>
 				<div className='flex justify-end gap-2'>
 					<DialogClose asChild>
