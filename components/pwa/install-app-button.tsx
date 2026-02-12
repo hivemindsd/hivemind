@@ -20,12 +20,16 @@ export function InstallAppButton() {
 	const [isIOS, setIsIOS] = useState(false)
 
 	useEffect(() => {
-		// Detect iOS
-		const isApple = /iPad|iPhone|iPod/.test(navigator.userAgent)
+		// Detect iOS or iPadOS 13+ (Mac userAgent with touch support)
+		const ua = navigator.userAgent || ''
+		const isApple = /iPad|iPhone|iPod/.test(ua) || (ua.includes('Macintosh') && 'ontouchend' in document)
 		setIsIOS(isApple)
 
-		// Check if already installed on iOS
-		if (isApple && (window.navigator as Navigator & { standalone?: boolean }).standalone) {
+		// Check if already installed: iOS standalone flag OR any platform with display-mode standalone
+		const iosStandalone = isApple && (window.navigator as Navigator & { standalone?: boolean }).standalone
+		const displayStandalone =
+			typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches
+		if (iosStandalone || displayStandalone) {
 			setIsInstalled(true)
 		}
 	}, [])
