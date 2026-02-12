@@ -5,6 +5,7 @@ import type { EnclosureDetail } from './types'
 import { EnclosureFilters } from './enclosure-filters'
 import { EnclosureGrid } from './enclosure-grid'
 import { EnclosureDetail as EnclosureDetailPanel } from './enclosure-detail'
+import { PageSplit } from '@/components/layout/page-split'
 
 const mockEnclosures: EnclosureDetail[] = [
 	{
@@ -118,18 +119,16 @@ export function EnclosuresPage() {
 	)
 
 	return (
-		<div className='space-y-4'>
+		<div className='space-y-4 flex flex-col min-h-0'>
 			<EnclosureFilters />
 
-			<div className='grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]'>
-				<EnclosureGrid
-					items={mockEnclosures}
-					selectedId={selected.id}
-					onSelect={setSelectedId}
-					className='min-h-[520px] lg:h-[calc(100vh-260px)]'
-				/>
-				<EnclosureDetailPanel enclosure={selected} className='min-h-[520px] lg:h-[calc(100vh-260px)]' />
-			</div>
+			<PageSplit
+				rightWidth='520px'
+				left={
+					<EnclosureGrid items={mockEnclosures} selectedId={selected.id} onSelect={setSelectedId} className='h-full' />
+				}
+				right={<EnclosureDetailPanel enclosure={selected} className='h-full' />}
+			/>
 		</div>
 	)
 }

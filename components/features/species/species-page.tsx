@@ -5,6 +5,7 @@ import type { SpeciesDetail } from './types'
 import { SpeciesFilters } from './species-filters'
 import { SpeciesGrid } from './species-grid'
 import { SpeciesDetailPanel } from './species-detail'
+import { PageSplit } from '@/components/layout/page-split'
 
 const mockSpecies: SpeciesDetail[] = [
 	{
@@ -74,17 +75,13 @@ export function SpeciesPage() {
 	const selected = useMemo(() => mockSpecies.find((item) => item.id === selectedId) ?? mockSpecies[0], [selectedId])
 
 	return (
-		<div className='space-y-4'>
+		<div className='space-y-4 flex flex-col min-h-0'>
 			<SpeciesFilters />
-			<div className='grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]'>
-				<SpeciesGrid
-					items={mockSpecies}
-					selectedId={selected.id}
-					onSelect={setSelectedId}
-					className='min-h-[520px] lg:h-[calc(100vh-260px)]'
-				/>
-				<SpeciesDetailPanel species={selected} />
-			</div>
+			<PageSplit
+				rightWidth='520px'
+				left={<SpeciesGrid items={mockSpecies} selectedId={selected.id} onSelect={setSelectedId} className='h-full' />}
+				right={<SpeciesDetailPanel species={selected} />}
+			/>
 		</div>
 	)
 }
