@@ -3,12 +3,21 @@
 import { useInstallPrompt } from '@/hooks/use-install-prompt'
 import { useEffect, useState } from 'react'
 import { Download } from 'lucide-react'
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogClose
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 
 export function InstallAppButton() {
 	const { isInstallable, handleInstall } = useInstallPrompt()
-	const [showInstall, setShowInstall] = useState(false)
-	const [isIOS, setIsIOS] = useState(false)
 	const [isInstalled, setIsInstalled] = useState(false)
+	const [showInstructions, setShowInstructions] = useState(false)
+	const [isIOS, setIsIOS] = useState(false)
 
 	useEffect(() => {
 		// Detect iOS
@@ -19,21 +28,42 @@ export function InstallAppButton() {
 		if (isApple && (window.navigator as Navigator & { standalone?: boolean }).standalone) {
 			setIsInstalled(true)
 		}
+	}, [])
 
-		setShowInstall(isInstallable || isApple)
-	}, [isInstallable])
+	const handleClick = () => {
+		if (isInstallable) {
+			handleInstall()
+		} else {
+			setShowInstructions(true)
+		}
+	}
 
 	if (isInstalled) return null
-	if (!showInstall) return null
 
 	return (
-		<button
-			onClick={handleInstall}
-			className='flex items-center gap-1.5 text-sm hover:underline cursor-pointer'
-			title={isIOS ? 'Tap share, then "Add to Home Screen"' : 'Install app'}
-		>
-			<Download className='size-4' />
-			Install
-		</button>
+		<>
+			<button onClick={handleClick} className='flex items-center gap-1.5 text-sm hover:underline cursor-pointer'>
+				<Download className='size-4' />
+				Install app
+			</button>
+
+			<Dialog open={showInstructions} onOpenChange={setShowInstructions}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Install App</DialogTitle>
+						<DialogDescription>
+							{isIOS
+								? 'To add this app to your home screen: Tap the Share button at the bottom, then scroll down and tap "Add to Home Screen".'
+								: 'To install this app, use your browser menu to add it to your home screen.'}
+						</DialogDescription>
+					</DialogHeader>
+					<div className='flex justify-end gap-2'>
+						<DialogClose asChild>
+							<Button variant='outline'>Close</Button>
+						</DialogClose>
+					</div>
+				</DialogContent>
+			</Dialog>
+		</>
 	)
 }
