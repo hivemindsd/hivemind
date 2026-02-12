@@ -1,5 +1,3 @@
-'use client'
-
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { MemberRow } from '@/components/org/member-row'
 
