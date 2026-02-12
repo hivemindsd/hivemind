@@ -61,7 +61,7 @@ export function LoginInstallPrompt() {
 				</DialogHeader>
 				<div className='flex justify-end gap-2'>
 					<DialogClose asChild>
-						<Button variant='outline'>Not now</Button>
+						<Button variant='outline'>Dismiss</Button>
 					</DialogClose>
 					{!isIOS && <Button onClick={handleInstallClick}>Install</Button>}
 				</div>
