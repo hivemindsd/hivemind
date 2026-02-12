@@ -63,7 +63,7 @@ export function LoginInstallPrompt() {
 					<DialogClose asChild>
 						<Button variant='outline'>Not now</Button>
 					</DialogClose>
-					<Button onClick={handleInstallClick}>Install</Button>
+				{!isIOS && <Button onClick={handleInstallClick}>Install</Button>}
 				</div>
 			</DialogContent>
 		</Dialog>
