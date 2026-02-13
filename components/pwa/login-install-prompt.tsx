@@ -14,24 +14,19 @@ import { useInstallPrompt } from '@/hooks/use-install-prompt'
 import { Download } from 'lucide-react'
 
 export function LoginInstallPrompt() {
-	const { isInstallable, handleInstall } = useInstallPrompt()
+	const { isInstallable, handleInstall, isIOS, isInstalled } = useInstallPrompt()
 	const [showPrompt, setShowPrompt] = useState(false)
-	const [isIOS, setIsIOS] = useState(false)
 
 	useEffect(() => {
-		// Detect iOS
-		const isApple = /iPad|iPhone|iPod/.test(navigator.userAgent)
-		setIsIOS(isApple)
-
 		// Add a small delay to allow beforeinstallprompt to fire
 		const timer = setTimeout(() => {
-			if ((isInstallable || isApple) && !sessionStorage.getItem('installPromptDismissed')) {
+			if ((isInstallable || isIOS) && !isInstalled && !sessionStorage.getItem('installPromptDismissed')) {
 				setShowPrompt(true)
 			}
 		}, 1000)
 
 		return () => clearTimeout(timer)
-	}, [isInstallable])
+	}, [isInstallable, isIOS, isInstalled])
 
 	const handleDismiss = () => {
 		sessionStorage.setItem('installPromptDismissed', 'true')

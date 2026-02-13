@@ -1,7 +1,7 @@
 'use client'
 
 import { useInstallPrompt } from '@/hooks/use-install-prompt'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Download } from 'lucide-react'
 import {
 	Dialog,
@@ -14,25 +14,8 @@ import {
 import { Button } from '@/components/ui/button'
 
 export function InstallAppButton() {
-	const { isInstallable, handleInstall } = useInstallPrompt()
-	const [isInstalled, setIsInstalled] = useState(false)
+	const { isInstallable, handleInstall, isInstalled, isIOS } = useInstallPrompt()
 	const [showInstructions, setShowInstructions] = useState(false)
-	const [isIOS, setIsIOS] = useState(false)
-
-	useEffect(() => {
-		// Detect iOS or iPadOS 13+ (Mac userAgent with touch support)
-		const ua = navigator.userAgent || ''
-		const isApple = /iPad|iPhone|iPod/.test(ua) || (ua.includes('Macintosh') && 'ontouchend' in document)
-		setIsIOS(isApple)
-
-		// Check if already installed: iOS standalone flag OR any platform with display-mode standalone
-		const iosStandalone = isApple && (window.navigator as Navigator & { standalone?: boolean }).standalone
-		const displayStandalone =
-			typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches
-		if (iosStandalone || displayStandalone) {
-			setIsInstalled(true)
-		}
-	}, [])
 
 	const handleClick = () => {
 		if (isInstallable) {

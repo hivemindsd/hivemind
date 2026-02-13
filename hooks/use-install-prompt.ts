@@ -9,6 +9,8 @@ interface BeforeInstallPromptEvent extends Event {
 export function useInstallPrompt() {
 	const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
 	const [isInstallable, setIsInstallable] = useState(false)
+	const [isIOS, setIsIOS] = useState(false)
+	const [isInstalled, setIsInstalled] = useState(false)
 
 	useEffect(() => {
 		const handleBeforeInstallPrompt = (e: Event) => {
@@ -24,6 +26,18 @@ export function useInstallPrompt() {
 		}
 	}, [])
 
+	// Detect iOS and whether the app is already running in standalone mode
+	useEffect(() => {
+		const ua = navigator.userAgent || ''
+		const apple = /iPad|iPhone|iPod/.test(ua) || (ua.includes('Macintosh') && 'ontouchend' in document)
+		setIsIOS(apple)
+
+		const iosStandalone = apple && (window.navigator as Navigator & { standalone?: boolean }).standalone
+		const displayStandalone =
+			typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches
+		setIsInstalled(!!(iosStandalone || displayStandalone))
+	}, [])
+
 	const handleInstall = async () => {
 		if (!deferredPrompt) return
 
@@ -36,5 +50,5 @@ export function useInstallPrompt() {
 		setDeferredPrompt(null)
 	}
 
-	return { isInstallable, handleInstall }
+	return { isInstallable, handleInstall, isIOS, isInstalled }
 }
