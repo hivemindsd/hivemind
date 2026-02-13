@@ -44,7 +44,7 @@ export type Invite = {
 	}
 }
 
-export type Tank = {
+export type Enclosure = {
 	id: number
 	org_id: number
 	species_id: string
@@ -211,7 +211,7 @@ export function useOrgDetails(orgId: number) {
 	})
 }
 
-export function useOrgTanks(orgId: number) {
+export function useOrgEnclosures(orgId: number) {
 	return useQuery({
 		queryKey: ['orgTanks', orgId],
 		queryFn: async () => {
@@ -222,7 +222,7 @@ export function useOrgTanks(orgId: number) {
 					'id, species_id, name, location, current_count, locations(id, name, description), species(id, scientific_name, common_name, care_instructions)'
 				)
 				.eq('org_id', orgId)
-				.order('current_count', { ascending: true })) as { data: Tank[] | null; error: PostgrestError | null }
+				.order('current_count', { ascending: true })) as { data: Enclosure[] | null; error: PostgrestError | null }
 
 			if (error) throw error
 			return data
@@ -231,7 +231,7 @@ export function useOrgTanks(orgId: number) {
 	})
 }
 
-export function useTank(orgId: number, tankId: number) {
+export function useOrgEnclosure(orgId: number, tankId: number) {
 	return useQuery({
 		queryKey: ['id', tankId],
 		queryFn: async () => {
@@ -241,7 +241,7 @@ export function useTank(orgId: number, tankId: number) {
 				.select('species_id, name, location, current_count')
 				.eq('org_id', orgId)
 				.eq('id', tankId)
-				.order('current_count', { ascending: true })) as { data: Tank | null; error: PostgrestError | null }
+				.order('current_count', { ascending: true })) as { data: Enclosure | null; error: PostgrestError | null }
 
 			if (error) throw error
 			return data
@@ -258,7 +258,7 @@ export function useOrgSpecies(orgId: number) {
 			const { data, error } = (await supabase
 				.from('tanks')
 				.select('species(id, scientific_name, common_name, care_instructions)')
-				.eq('org_id', orgId)) as { data: Tank[] | null; error: PostgrestError | null }
+				.eq('org_id', orgId)) as { data: Enclosure[] | null; error: PostgrestError | null }
 			if (error) throw error
 
 			const uniqueSpecies = Array.from(

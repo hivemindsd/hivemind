@@ -293,21 +293,21 @@ export function useCreateEnclosure() {
 			orgId: number
 			species_id: number
 			name: string
-			location: string
+			location: number
 			current_count: number
 		}) => {
 			const supabase = createClient()
-			if (name.trim() === '' || location.trim() === '' || location.trim() === '') {
+			if (name.trim() === '') {
 				throw new Error('Recieved an empty field')
 			}
 			// Insert the organization
 			const { error: enclosureError } = await supabase
-				.from('enclosure')
+				.from('tanks')
 				.insert({
 					org_id: orgId,
 					species_id: species_id,
 					name: name.trim(),
-					location: location.trim(),
+					location: location,
 					current_count: current_count
 				})
 				.select()
@@ -317,7 +317,7 @@ export function useCreateEnclosure() {
 		},
 		onSuccess: (data, variables) => {
 			// Invalidate and refetch enclosures orgs
-			queryClient.invalidateQueries({ queryKey: ['tanks', variables.orgId] })
+			queryClient.invalidateQueries({ queryKey: ['orgTanks', variables.orgId] })
 		}
 	})
 }

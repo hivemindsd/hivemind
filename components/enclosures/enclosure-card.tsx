@@ -12,7 +12,7 @@ import {
 	DialogTrigger
 } from '@/components/ui/dialog-to-drawer'
 import { PlusIcon } from 'lucide-react'
-import type { Tank } from '@/lib/react-query/queries'
+import type { Enclosure } from '@/lib/react-query/queries'
 
 // const urgencyRing: Record<NonNullable<any['urgency']>, string> = {
 // 	low: 'border-sky-400',
@@ -21,7 +21,7 @@ import type { Tank } from '@/lib/react-query/queries'
 // 	critical: 'border-red-500'
 // }
 
-export function EnclosureCard({ orgId, enclosure }: { orgId: number; enclosure: Tank }) {
+export function EnclosureCard({ orgId, enclosure }: { orgId: number; enclosure: Enclosure }) {
 	// const ringClass = enclosure.urgency ? urgencyRing[enclosure.urgency] : 'border-sky-400'
 
 	const router = useRouter()
@@ -35,15 +35,15 @@ export function EnclosureCard({ orgId, enclosure }: { orgId: number; enclosure: 
 						variant='secondary'
 						className='rounded-xl border-2 bg-muted/50 text-center shadow-sm transition hover:bg-muted flex flex-col size-auto px-4 py-6'
 					>
-						<div className='text-xs'>{enclosure.species?.common_name}</div>
-						<div className='text-base font-semibold'>Tank {enclosure.id}</div>
+						<div className='text-xs'>Encl. #{enclosure.id}</div>
+						<div className='text-base font-semibold'>{enclosure.name}</div>
 						<div className='text-xs'>{enclosure.locations?.name}</div>
 					</Button>
 				</DialogTrigger>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>
-							Tank {enclosure.id} - <span className='text-sm'>{enclosure.species?.common_name}</span>
+							Enclosure #{enclosure.id} - <span className='text-sm'>{enclosure.species?.common_name}</span>
 						</DialogTitle>
 						<p className='text-muted-foreground italic'>{enclosure.species?.scientific_name}</p>
 					</DialogHeader>

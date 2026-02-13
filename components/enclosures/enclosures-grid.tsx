@@ -1,5 +1,5 @@
 'use client'
-import { useOrgTanks } from '@/lib/react-query/queries'
+import { useOrgEnclosures } from '@/lib/react-query/queries'
 import { EnclosureCard } from './enclosure-card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
@@ -8,7 +8,7 @@ import { Search } from 'lucide-react'
 // import { useState } from 'react'
 
 export function EnclosureGrid({ orgId }: { orgId: number }) {
-	const { data } = useOrgTanks(orgId)
+	const { data } = useOrgEnclosures(orgId)
 	console.log(data)
 
 	// const [searchValue, setSearchValue] = useState('')
@@ -17,28 +17,30 @@ export function EnclosureGrid({ orgId }: { orgId: number }) {
 	return (
 		<>
 			<div className='rounded-xl border bg-muted/20 mb-2'>
-				<div className='h-full p-4 flex flex-row gap-4'>
-					<Select defaultValue='filter'>
-						<SelectTrigger className='w-44'>
-							<SelectValue placeholder='Filter' />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value='filter'>Filter</SelectItem>
-							<SelectItem value='urgent'>Urgent</SelectItem>
-							<SelectItem value='assigned'>Assigned</SelectItem>
-						</SelectContent>
-					</Select>
-					<Select defaultValue='sort'>
-						<SelectTrigger className='w-44'>
-							<SelectValue placeholder='Sort' />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value='sort'>Sort</SelectItem>
-							<SelectItem value='name'>Location</SelectItem>
-							<SelectItem value='recent'>Species</SelectItem>
-						</SelectContent>
-					</Select>
-					<InputGroup className='max-w-xs ml-auto'>
+				<div className='w-full p-4 flex flex-row gap-3 flex-wrap'>
+					<div className='flex flex-row gap-1 sm:gap-4'>
+						<Select defaultValue='filter'>
+							<SelectTrigger className='w-44'>
+								<SelectValue placeholder='Filter' />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value='filter'>Filter</SelectItem>
+								<SelectItem value='urgent'>Urgent</SelectItem>
+								<SelectItem value='assigned'>Assigned</SelectItem>
+							</SelectContent>
+						</Select>
+						<Select defaultValue='sort'>
+							<SelectTrigger className='w-44'>
+								<SelectValue placeholder='Sort' />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value='sort'>Sort</SelectItem>
+								<SelectItem value='name'>Location</SelectItem>
+								<SelectItem value='recent'>Species</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
+					<InputGroup className='w-56 mx-auto sm:ml-auto sm:mr-0'>
 						<InputGroupInput placeholder='Search...' />
 						<InputGroupAddon>
 							<Search />
@@ -49,7 +51,7 @@ export function EnclosureGrid({ orgId }: { orgId: number }) {
 			</div>
 			<div className='rounded-xl border bg-muted/20'>
 				<div className='h-full overflow-y-auto p-4'>
-					<div className='grid grid-cols-2 gap-4'>
+					<div className='grid grid-cols-2 gap-3'>
 						{data && data.length > 0 ? (
 							data.map((enclosure) => (
 								<EnclosureCard

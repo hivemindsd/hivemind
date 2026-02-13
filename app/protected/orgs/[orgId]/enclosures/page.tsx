@@ -18,7 +18,7 @@ export default async function Page({ params }: { params: Promise<{ orgId: number
 						<EnclosureGrid orgId={orgId} />
 					</div>
 				</div>
-				<div className='flex flex-col gap-4'>
+				<div className='flex flex-col gap-4 text-center'>
 					<p className='text-sm text-muted-foreground'>Manage your organization&apos;s enclosures.</p>
 				</div>
 			</div>

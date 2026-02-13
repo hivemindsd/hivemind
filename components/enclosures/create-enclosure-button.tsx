@@ -19,6 +19,7 @@ import { useState } from 'react'
 import { useCreateEnclosure } from '@/lib/react-query/mutations'
 import { useCurrentClientUser } from '@/lib/react-query/auth'
 import { useOrgLocations, useOrgSpecies } from '@/lib/react-query/queries'
+// import type {Enclosure, Species} from '@lib/react-query/queries'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 export function CreateEnclosureButton({ orgId }: { orgId: number }) {
@@ -30,27 +31,40 @@ export function CreateEnclosureButton({ orgId }: { orgId: number }) {
 	const { data: user } = useCurrentClientUser()
 	const createEnclosureMutation = useCreateEnclosure()
 
-	// const handleSubmit = async (e: React.FormEvent) => {
-	// 	e.preventDefault()
-	// 	if (!user?.id) return
-
-	// 	createOrgMutation.mutate(
-	// 		{ name, userId: user.id },
-	// 		{
-	// 			onSuccess: () => {
-	// 				setOpen(false)
-	// 				setName('')
-	// 			}
-	// 		}
-	// 	)
-	// }
-
 	const { data: orgSpecies } = useOrgSpecies(orgId)
 	const speciesNames = orgSpecies?.map((species) => species?.common_name) ?? []
-	console.log(speciesNames)
+	// console.log(speciesNames)
 	const { data: orgLocations } = useOrgLocations(orgId)
 	const locationNames = orgLocations?.map((location) => location.name) ?? []
-	console.log('Locations ' + locationNames)
+	// console.log('Locations ' + locationNames)
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault()
+		console.log(species)
+		if (!name || !species || !location) return
+
+		const species_id = orgSpecies?.find((spec) => spec?.common_name === species)
+		const location_id = orgLocations?.find((loc) => loc?.name === location)
+		console.log(species_id)
+
+		if (!species_id || !location_id) {
+			console.log('ERROR LOOKING UP SPECIES OR LOCATION')
+			return
+		}
+		console.log('MUTATING')
+		createEnclosureMutation.mutate(
+			{ orgId: orgId, species_id: species_id?.id, name: name, location: location_id?.id, current_count: count },
+			{
+				onSuccess: () => {
+					setOpen(false)
+					setName('')
+					setSpecies('')
+					setLocation('')
+					setCount(0)
+				}
+			}
+		)
+	}
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
@@ -60,9 +74,7 @@ export function CreateEnclosureButton({ orgId }: { orgId: number }) {
 				</Button>
 			</DialogTrigger>
 			<DialogContent>
-				<form
-				// onSubmit={handleSubmit}
-				>
+				<form onSubmit={handleSubmit}>
 					<DialogHeader>
 						<DialogTitle>Create Enclosure</DialogTitle>
 						<DialogDescription>All fields are required.</DialogDescription>
