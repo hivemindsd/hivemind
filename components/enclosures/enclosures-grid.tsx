@@ -8,11 +8,13 @@ import { Search } from 'lucide-react'
 // import { useState } from 'react'
 
 export function EnclosureGrid({ orgId }: { orgId: number }) {
-	const { data } = useOrgEnclosures(orgId)
-	console.log(data)
+	const { data: orgEnclosures } = useOrgEnclosures(orgId)
+	console.log(orgEnclosures)
 
 	// const [searchValue, setSearchValue] = useState('')
 	// const [searchResultCount, setSearchResultCount] = useState(0)
+
+	const handleFilter = () => {}
 
 	return (
 		<>
@@ -25,7 +27,9 @@ export function EnclosureGrid({ orgId }: { orgId: number }) {
 							</SelectTrigger>
 							<SelectContent>
 								<SelectItem value='filter'>Filter</SelectItem>
-								<SelectItem value='urgent'>Urgent</SelectItem>
+								<SelectItem onChange={handleFilter} value='urgent'>
+									Urgent
+								</SelectItem>
 								<SelectItem value='assigned'>Assigned</SelectItem>
 							</SelectContent>
 						</Select>
@@ -52,8 +56,8 @@ export function EnclosureGrid({ orgId }: { orgId: number }) {
 			<div className='rounded-xl border bg-muted/20'>
 				<div className='h-full overflow-y-auto p-4'>
 					<div className='grid grid-cols-2 gap-3'>
-						{data && data.length > 0 ? (
-							data.map((enclosure) => (
+						{orgEnclosures && orgEnclosures.length > 0 ? (
+							orgEnclosures.map((enclosure) => (
 								<EnclosureCard
 									key={enclosure.id}
 									orgId={orgId}
