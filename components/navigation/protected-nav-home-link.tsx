@@ -20,7 +20,7 @@ export function ProtectedNavHomeLink() {
 	}
 
 	return (
-		<Link href={href} className='pl-12 md:pl-7 ml-0 md:ml-2 font-dancing-script text-2xl md:text-4xl font-bold'>
+		<Link href={href} className='pl-8 md:pl-7 ml-0 md:ml-2 font-dancing-script text-2xl md:text-4xl font-bold'>
 			Hivemind
 		</Link>
 	)
