@@ -46,7 +46,7 @@ export function InstallAppButton() {
 					</DialogHeader>
 					<div className='flex justify-end gap-2'>
 						<DialogClose asChild>
-							<Button variant='outline'>Close</Button>
+							<Button variant='outline'>Dismiss</Button>
 						</DialogClose>
 					</div>
 				</DialogContent>
