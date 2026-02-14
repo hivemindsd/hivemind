@@ -51,7 +51,7 @@ export type Enclosure = {
 	name: string
 	created_at: string
 	location: string
-	current_count: string
+	current_count: number
 	locations?: {
 		name: string
 	}
@@ -70,7 +70,6 @@ export type Species = {
 	name: string
 	created_at: string
 	location: string
-	current_count: string
 }
 
 export type Location = {

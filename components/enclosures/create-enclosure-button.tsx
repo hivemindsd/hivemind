@@ -19,7 +19,6 @@ import { useState } from 'react'
 import { useCreateEnclosure } from '@/lib/react-query/mutations'
 import { useCurrentClientUser } from '@/lib/react-query/auth'
 import { useOrgLocations, useOrgSpecies } from '@/lib/react-query/queries'
-// import type {Enclosure, Species} from '@lib/react-query/queries'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 export function CreateEnclosureButton({ orgId }: { orgId: number }) {
@@ -33,10 +32,8 @@ export function CreateEnclosureButton({ orgId }: { orgId: number }) {
 
 	const { data: orgSpecies } = useOrgSpecies(orgId)
 	const speciesNames = orgSpecies?.map((species) => species?.common_name) ?? []
-	// console.log(speciesNames)
 	const { data: orgLocations } = useOrgLocations(orgId)
 	const locationNames = orgLocations?.map((location) => location.name) ?? []
-	// console.log('Locations ' + locationNames)
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -45,7 +42,6 @@ export function CreateEnclosureButton({ orgId }: { orgId: number }) {
 
 		const species_id = orgSpecies?.find((spec) => spec?.common_name === species)
 		const location_id = orgLocations?.find((loc) => loc?.name === location)
-		console.log(species_id)
 
 		if (!species_id || !location_id) {
 			console.log('ERROR LOOKING UP SPECIES OR LOCATION')

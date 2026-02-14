@@ -13,6 +13,8 @@ import {
 } from '@/components/ui/dialog-to-drawer'
 import { PlusIcon } from 'lucide-react'
 import type { Enclosure } from '@/lib/react-query/queries'
+import { InputGroup, InputGroupAddon, InputGroupButton } from '../ui/input-group'
+import TextareaAutosize from 'react-textarea-autosize'
 
 // const urgencyRing: Record<NonNullable<any['urgency']>, string> = {
 // 	low: 'border-sky-400',
@@ -26,6 +28,7 @@ export function EnclosureCard({ orgId, enclosure }: { orgId: number; enclosure: 
 
 	const router = useRouter()
 	const [open, setOpen] = useState(false)
+	const [openNote, setOpenNote] = useState(false)
 
 	return (
 		<>
@@ -77,9 +80,29 @@ export function EnclosureCard({ orgId, enclosure }: { orgId: number; enclosure: 
 											<span className='font-medium text-foreground pl-2'>this is where the notes would go</span>
 										</div>
 									</div>
-									<Button variant='secondary' className='max-w-fit ml-auto text-xs'>
-										<PlusIcon /> Note
+									<Button
+										variant='secondary'
+										className='max-w-fit ml-auto text-xs'
+										onClick={() => setOpenNote(!openNote)}
+									>
+										<PlusIcon />
 									</Button>
+									{openNote && (
+										<div className='grid w-full max-w-sm gap-6 pt-1'>
+											<InputGroup>
+												<TextareaAutosize
+													data-slot='input-group-control'
+													className='flex field-sizing-content min-h-16 w-full resize-none rounded-md bg-transparent px-3 py-2.5 text-base transition-[color,box-shadow] outline-none md:text-sm'
+													placeholder='Autoresize textarea...'
+												/>
+												<InputGroupAddon align='block-end'>
+													<InputGroupButton className='ml-auto' size='sm' variant='default'>
+														Submit
+													</InputGroupButton>
+												</InputGroupAddon>
+											</InputGroup>
+										</div>
+									)}
 								</div>
 							</div>
 							<div className='flex flex-row gap-2 justify-around'>

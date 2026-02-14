@@ -10,9 +10,7 @@ export default async function Page({ params }: { params: Promise<{ orgId: number
 				<div className='pb-5 flex-row flex items-center justify-between'>
 					<div className='flex-col'>
 						<div className='flex flex-row mb-2 justify-between'>
-							<h1 className='text-2xl font-semibold grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]'>
-								Enclosures for org = {orgId}
-							</h1>
+							<h1 className='text-2xl font-semibold grid gap-4 lg:grid-cols-[minmax(0,1fr)_380px]'>Enclosures</h1>
 							<CreateEnclosureButton orgId={orgId} />
 						</div>
 						<EnclosureGrid orgId={orgId} />
